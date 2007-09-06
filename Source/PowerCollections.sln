@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wintellect.PowerCollections", "PowerCollections\Wintellect.PowerCollections.csproj", "{5821977D-AC2C-4912-BCD0-6E6B1A756167}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wintellect.PowerCollections.Tests", "UnitTestsVSTS\Wintellect.PowerCollections.Tests.csproj", "{CCCE4A05-6914-48E9-B232-A8827BCDE681}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F7C902D-25A9-4455-9494-45A99B6AC33A}"
+	ProjectSection(SolutionItems) = preProject
+		powercollections.vsmdi = powercollections.vsmdi
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs04.codeplex.com/
+		SccProjectUniqueName0 = PowerCollections\\Wintellect.PowerCollections.csproj
+		SccProjectName0 = PowerCollections
+		SccLocalPath0 = PowerCollections
+		SccProjectUniqueName1 = UnitTestsVSTS\\Wintellect.PowerCollections.Tests.csproj
+		SccProjectName1 = UnitTestsVSTS
+		SccLocalPath1 = UnitTestsVSTS
+		SccLocalPath2 = .
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = PowerCollections.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCE4A05-6914-48E9-B232-A8827BCDE681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCE4A05-6914-48E9-B232-A8827BCDE681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCE4A05-6914-48E9-B232-A8827BCDE681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCE4A05-6914-48E9-B232-A8827BCDE681}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

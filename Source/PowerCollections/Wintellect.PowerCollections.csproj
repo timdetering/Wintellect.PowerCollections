@@ -1,0 +1,97 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5821977D-AC2C-4912-BCD0-6E6B1A756167}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Wintellect.PowerCollections</RootNamespace>
+    <AssemblyName>PowerCollections</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <SignAssembly>true</SignAssembly>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <AssemblyOriginatorKeyFile>CreateNewKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\PowerCollections.XML</DocumentationFile>
+    <BaseAddress>1239678976</BaseAddress>
+    <NoWarn>
+    </NoWarn>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRules>-Microsoft.Globalization#CA1301;-Microsoft.Globalization#CA1302;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1306;-Microsoft.Globalization#CA1304;-Microsoft.Globalization#CA1305;-Microsoft.Globalization#CA1300;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00002;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00001;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00009;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00008;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00011;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00010;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00003;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00006;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00004;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00007;-Microsoft.Practices.FxCop.Rules.WcfSecurity#WCFS00005;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0013;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0012;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0015;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0014;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0011;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0010;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0009;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0008;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0007;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0006;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0005;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0004;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0001;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0003;-Microsoft.Practices.FxCop.Rules.WcfSemantic#WCFSM0002;-Wintellect.DesignRules#Wintellect2002;-Wintellect.DesignRules#Wintellect2001;-Wintellect.DesignRules#Wintellect2003;-Wintellect.DesignRules#Wintellect2004;-Wintellect.DesignRules#Wintellect2000;-Wintellect.DesignRules#Wintellect2006;-Wintellect.DesignRules#Wintellect2005;-Wintellect.PerformanceRules#Wintellect1000;-Wintellect.UsageRules#Wintellect3000;-Wintellect.UsageRules#Wintellect3003;-Wintellect.UsageRules#Wintellect3002;-Wintellect.UsageRules#Wintellect3005;-Wintellect.UsageRules#Wintellect3004;-Wintellect.UsageRules#Wintellect3001</CodeAnalysisRules>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\PowerCollections.XML</DocumentationFile>
+    <BaseAddress>1239678976</BaseAddress>
+    <NoWarn>
+    </NoWarn>
+    <CodeAnalysisRules>-Wintellect.DesignRules#Wintellect2002;-Wintellect.DesignRules#Wintellect2001;-Wintellect.DesignRules#Wintellect2003;-Wintellect.DesignRules#Wintellect2004;-Wintellect.DesignRules#Wintellect2000;-Wintellect.DesignRules#Wintellect2006;-Wintellect.DesignRules#Wintellect2005;-Wintellect.PerformanceRules#Wintellect1000;-Wintellect.UsageRules#Wintellect3000;-Wintellect.UsageRules#Wintellect3003;-Wintellect.UsageRules#Wintellect3002;-Wintellect.UsageRules#Wintellect3005;-Wintellect.UsageRules#Wintellect3004;-Wintellect.UsageRules#Wintellect3001</CodeAnalysisRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseSigned|AnyCPU' ">
+    <OutputPath>bin\ReleaseSigned\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>1239678976</BaseAddress>
+    <DocumentationFile>bin\Release\PowerCollections.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>C:\Program Files (x86)\Microsoft Visual Studio 8\Team Tools\Static Analysis Tools\FxCop\\rules</CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="CreateNewKey.pfx" />
+    <Compile Include="Algorithms.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Bag.cs" />
+    <Compile Include="BigList.cs" />
+    <Compile Include="CollectionBase.cs" />
+    <Compile Include="Comparers.cs" />
+    <Compile Include="Deque.cs" />
+    <Compile Include="DictionaryBase.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="ListBase.cs" />
+    <Compile Include="MultiDictionary.cs" />
+    <Compile Include="MultiDictionaryBase.cs" />
+    <Compile Include="OrderedBag.cs" />
+    <Compile Include="OrderedDictionary.cs" />
+    <Compile Include="OrderedMultiDictionary.cs" />
+    <Compile Include="OrderedSet.cs" />
+    <Compile Include="Pair.cs" />
+    <Compile Include="ReadOnlyCollectionBase.cs" />
+    <Compile Include="ReadOnlyDictionaryBase.cs" />
+    <Compile Include="ReadOnlyListBase.cs" />
+    <Compile Include="ReadOnlyMultiDictionaryBase.cs" />
+    <Compile Include="RedBlack.cs" />
+    <Compile Include="Set.cs" />
+    <Compile Include="Strings.cs" />
+    <Compile Include="Triple.cs" />
+    <Compile Include="Util.cs" />
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>
