@@ -14,182 +14,41 @@ using System.Diagnostics;
 namespace Wintellect.PowerCollections
 {
     /// <summary>
-    /// CollectionBase is a base class that can be used to more easily implement the
-    /// generic ICollection&lt;T&gt; and non-generic ICollection interfaces.
+    /// ReadOnlyCollectionBase is a base class that can be used to more easily implement the
+    /// generic ICollection&lt;T&gt; and non-generic ICollection interfaces for a read-only collection:
+    /// a collection that does not allow adding or removing elements.
     /// </summary>
     /// <remarks>
-    /// <para>To use CollectionBase as a base class, the derived class must override
-    /// the Count, GetEnumerator, Add, Clear, and Remove methods. </para>
+    /// <para>To use ReadOnlyCollectionBase as a base class, the derived class must override
+    /// the Count and GetEnumerator methods. </para>
     /// <para>ICollection&lt;T&gt;.Contains need not be implemented by the
-    /// derived class, but it should be strongly considered, because the CollectionBase implementation
+    /// derived class, but it should be strongly considered, because the ReadOnlyCollectionBase implementation
     /// may not be very efficient.</para>
     /// </remarks>
     /// <typeparam name="T">The item type of the collection.</typeparam>
     [Serializable]
     [DebuggerDisplay("{DebuggerDisplayString()}")]
-    public abstract class CollectionBase<T> : ICollection<T>, ICollection
+    public abstract class ReadOnlyCollectionBase<T> : ICollection<T>, ICollection
     {
         /// <summary>
-        /// Creates a new CollectionBase. 
+        /// Throws an NotSupportedException stating that this collection cannot be modified.
         /// </summary>
-        protected CollectionBase()
+        private void MethodModifiesCollection()
         {
+            throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, Util.SimpleClassName(this.GetType())));
         }
+
+        #region Delegate operations
 
         /// <summary>
         /// Shows the string representation of the collection. The string representation contains
-        /// a list of the items in the collection. Contained collections (except string) are expanded
-        /// recursively.
+        /// a list of the items in the collection.
         /// </summary>
         /// <returns>The string representation of the collection.</returns>
         public override string ToString()
         {
             return Algorithms.ToString(this);
         }
-
-
-        #region ICollection<T> Members
-
-        /// <summary>
-        /// Must be overridden to allow adding items to this collection.
-        /// </summary>
-        /// <remarks><p>This method is not abstract, although derived classes should always
-        /// override it. It is not abstract because some derived classes may wish to reimplement
-        /// Add with a different return type (typically bool). In C#, this can be accomplished
-        /// with code like the following:</p>
-        /// <code>
-        ///     public class MyCollection&lt;T&gt;: CollectionBase&lt;T&gt;, ICollection&lt;T&gt;
-        ///     {
-        ///         public new bool Add(T item) {
-        ///             /* Add the item */
-        ///         }
-        ///  
-        ///         void ICollection&lt;T&gt;.Add(T item) {
-        ///             Add(item);
-        ///         }
-        ///     }
-        /// </code>
-        /// </remarks>
-        /// <param name="item">Item to be added to the collection.</param>
-        /// <exception cref="NotImplementedException">Always throws this exception to indicated
-        /// that the method must be overridden or re-implemented in the derived class.</exception>
-        public virtual void Add(T item)
-        {
-            throw new NotImplementedException(Strings.MustOverrideOrReimplement);
-        }
-
-
-        /// <summary>
-        /// Must be overridden to allow clearing this collection.
-        /// </summary>
-        public abstract void Clear();
-
-        /// <summary>
-        /// Must be overridden to allow removing items from this collection.
-        /// </summary>
-        /// <returns>True if <paramref name="item"/> existed in the collection and
-        /// was removed. False if <paramref name="item"/> did not exist in the collection.</returns>
-        public abstract bool Remove(T item);
-
-        /// <summary>
-        /// Determines if the collection contains a particular item. This default implementation
-        /// iterates all of the items in the collection via GetEnumerator, testing each item
-        /// against <paramref name="item"/> using IComparable&lt;T&gt;.Equals or
-        /// Object.Equals.
-        /// </summary>
-        /// <remarks>You should strongly consider overriding this method to provide
-        /// a more efficient implementation, or if the default equality comparison
-        /// is inappropriate.</remarks>
-        /// <param name="item">The item to check for in the collection.</param>
-        /// <returns>True if the collection contains <paramref name="item"/>, false otherwise.</returns>
-        public virtual bool Contains(T item)
-        {
-            IEqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-            foreach (T i in this) {
-                if (equalityComparer.Equals(i, item))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Copies all the items in the collection into an array. Implemented by
-        /// using the enumerator returned from GetEnumerator to get all the items
-        /// and copy them to the provided array.
-        /// </summary>
-        /// <param name="array">Array to copy to.</param>
-        /// <param name="arrayIndex">Starting index in <paramref name="array"/> to copy to.</param>
-        public virtual void CopyTo(T[] array, int arrayIndex)
-        {
-            int count = this.Count;
-
-            if (count == 0)
-                return;
-
-            if (array == null)
-                throw new ArgumentNullException("array");
-            if (count < 0)
-                throw new ArgumentOutOfRangeException("count", count, Strings.ArgMustNotBeNegative);
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException("arrayIndex", arrayIndex, Strings.ArgMustNotBeNegative);
-            if (arrayIndex >= array.Length || count > array.Length - arrayIndex)
-                throw new ArgumentException("arrayIndex", Strings.ArrayTooSmall);
-
-            int index = arrayIndex, i = 0;
-            foreach (T item in (ICollection<T>)this) {
-                if (i >= count)
-                    break;
-
-                array[index] = item;
-                ++index;
-                ++i;
-            }
-        }
-
-        /// <summary>
-        /// Creates an array of the correct size, and copies all the items in the 
-        /// collection into the array, by calling CopyTo.
-        /// </summary>
-        /// <returns>An array containing all the elements in the collection, in order.</returns>
-        public virtual T[] ToArray()
-        {
-            int count = this.Count;
-
-            T[] array = new T[count];
-            CopyTo(array, 0);
-            return array;
-        }
-
-        /// <summary>
-        /// Must be overridden to provide the number of items in the collection.
-        /// </summary>
-        /// <value>The number of items in the collection.</value>
-        public abstract int Count { get; }
-
-        /// <summary>
-        /// Indicates whether the collection is read-only. Always returns false.
-        /// </summary>
-        /// <value>Always returns false.</value>
-        bool ICollection<T>.IsReadOnly
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// Provides a read-only view of this collection. The returned ICollection&lt;T&gt; provides
-        /// a view of the collection that prevents modifications to the collection. Use the method to provide
-        /// access to the collection without allowing changes. Since the returned object is just a view,
-        /// changes to the collection will be reflected in the view.
-        /// </summary>
-        /// <returns>An ICollection&lt;T&gt; that provides read-only access to the collection.</returns>
-        public virtual ICollection<T> AsReadOnly()
-        {
-            return Algorithms.ReadOnly<T>(this);
-        }
-
-        #endregion
-
-        #region Delegate operations
 
         /// <summary>
         /// Determines if the collection contains any item that satisfies the condition
@@ -243,26 +102,12 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="predicate">A delegate that defines the condition to check for.</param>
         /// <returns>An IEnumerable&lt;T&gt; that enumerates the items that satisfy the condition.</returns>
-        public virtual IEnumerable<T> FindAll(Predicate<T> predicate)
+        public IEnumerable<T> FindAll(Predicate<T> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException("predicate");
 
             return Algorithms.FindWhere(this, predicate);
-        }
-
-        /// <summary>
-        /// Removes all the items in the collection that satisfy the condition
-        /// defined by <paramref name="predicate"/>.
-        /// </summary>
-        /// <param name="predicate">A delegate that defines the condition to check for.</param>
-        /// <returns>Returns a collection of the items that were removed, in sorted order.</returns>
-        public virtual ICollection<T> RemoveAll(Predicate<T> predicate)
-        {
-            if (predicate == null)
-                throw new ArgumentNullException("predicate");
-
-            return Algorithms.RemoveWhere(this, predicate);
         }
 
         /// <summary>
@@ -293,6 +138,128 @@ namespace Wintellect.PowerCollections
                 throw new ArgumentNullException("converter");
 
             return Algorithms.Convert(this, converter);
+        }
+
+        #endregion Delegate operations
+
+        #region ICollection<T> Members
+
+        /// <summary>
+        /// This method throws an NotSupportedException
+        /// stating the collection is read-only.
+        /// </summary>
+        /// <param name="item">Item to be added to the collection.</param>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        void ICollection<T>.Add(T item)
+        {
+            MethodModifiesCollection();
+        }
+
+        /// <summary>
+        /// This method throws an NotSupportedException
+        /// stating the collection is read-only.
+        /// </summary>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        void ICollection<T>.Clear()
+        {
+            MethodModifiesCollection();
+        }
+
+        /// <summary>
+        /// This method throws an NotSupportedException
+        /// stating the collection is read-only.
+        /// </summary>
+        /// <param name="item">Item to be removed from the collection.</param>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        bool ICollection<T>.Remove(T item)
+        {
+            MethodModifiesCollection();
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if the collection contains a particular item. This default implementation
+        /// iterates all of the items in the collection via GetEnumerator, testing each item
+        /// against <paramref name="item"/> using IComparable&lt;T&gt;.Equals or
+        /// Object.Equals.
+        /// </summary>
+        /// <remarks>You should strongly consider overriding this method to provide
+        /// a more efficient implementation.</remarks>
+        /// <param name="item">The item to check for in the collection.</param>
+        /// <returns>True if the collection contains <paramref name="item"/>, false otherwise.</returns>
+        public virtual bool Contains(T item)
+        {
+            IEqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+            foreach (T i in this) {
+                if (equalityComparer.Equals(i, item))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Copies all the items in the collection into an array. Implemented by
+        /// using the enumerator returned from GetEnumerator to get all the items
+        /// and copy them to the provided array.
+        /// </summary>
+        /// <param name="array">Array to copy to.</param>
+        /// <param name="arrayIndex">Starting index in <paramref name="array"/> to copy to.</param>
+        public virtual void CopyTo(T[] array, int arrayIndex)
+        {
+            int count = this.Count;
+
+            if (count == 0)
+                return;
+
+            if (array == null)
+                throw new ArgumentNullException("array");
+            if (count < 0)
+                throw new IndexOutOfRangeException(Strings.ArgMustNotBeNegative);
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException("arrayIndex", arrayIndex, Strings.ArgMustNotBeNegative);
+            if (arrayIndex >= array.Length || count > array.Length - arrayIndex)
+                throw new ArgumentException("arrayIndex", Strings.ArrayTooSmall);
+
+            int index = arrayIndex, i = 0;
+            //TODO: Look into this
+            foreach (T item in (ICollection<T>)this) {
+                if (i >= count)
+                    break;
+
+                array[index] = item;
+                ++index;
+                ++i;
+            }
+        }
+
+        /// <summary>
+        /// Creates an array of the correct size, and copies all the items in the 
+        /// collection into the array, by calling CopyTo.
+        /// </summary>
+        /// <returns>An array containing all the elements in the collection, in order.</returns>
+        public virtual T[] ToArray()
+        {
+            int count = this.Count;
+
+            T[] array = new T[count];
+            CopyTo(array, 0);
+            return array;
+        }
+
+        /// <summary>
+        /// Must be overridden to provide the number of items in the collection.
+        /// </summary>
+        /// <value>The number of items in the collection.</value>
+        public abstract int Count { get; }
+
+        /// <summary>
+        /// Indicates whether the collection is read-only. Returns the value
+        /// of readOnly that was provided to the constructor.
+        /// </summary>
+        /// <value>Always true.</value>
+        bool ICollection<T>.IsReadOnly
+        {
+            get { return true; }
         }
 
         #endregion
@@ -326,12 +293,15 @@ namespace Wintellect.PowerCollections
 
             if (array == null)
                 throw new ArgumentNullException("array");
+            if (count < 0)
+                throw new IndexOutOfRangeException(Strings.ArgMustNotBeNegative);
             if (index < 0)
                 throw new ArgumentOutOfRangeException("index", index, Strings.ArgMustNotBeNegative);
             if (index >= array.Length || count > array.Length - index)
                 throw new ArgumentException("index", Strings.ArrayTooSmall);
 
             int i = 0;
+            //TODO: Look into this
             foreach (object o in (ICollection)this) {
                 if (i >= count)
                     break;
@@ -415,6 +385,5 @@ namespace Wintellect.PowerCollections
             builder.Append('}');
             return builder.ToString();
         }
-
     }
 }

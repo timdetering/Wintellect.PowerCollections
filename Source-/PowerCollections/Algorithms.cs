@@ -12,9 +12,6 @@ using System.Collections.Generic;
 
 #pragma warning disable 419  // Ambigious cref in XML comment
 
-// Make internals of this library available to the unit test framework.
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")]
-
 // Everything should be CLS compliant.
 [assembly: CLSCompliant(true)]
 
@@ -52,8 +49,8 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ListRange<T> : ListBase<T>, ICollection<T>
         {
-            private IList<T> wrappedList;
-            private int start;
+            private readonly IList<T> wrappedList;
+            private readonly int start;
             private int count;
 
             /// <summary>
@@ -181,8 +178,8 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ArrayRange<T> : ListBase<T>
         {
-            private T[] wrappedArray;
-            private int start;
+            private readonly T[] wrappedArray;
+            private readonly int start;
             private int count;
 
             /// <summary>
@@ -301,7 +298,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ReadOnlyCollection<T> : ICollection<T>
         {
-            private ICollection<T> wrappedCollection;  // The collection we are wrapping (never null).
+            private readonly ICollection<T> wrappedCollection;  // The collection we are wrapping (never null).
 
             /// <summary>
             /// Create a ReadOnlyCollection wrapped around the given collection.
@@ -315,7 +312,7 @@ namespace Wintellect.PowerCollections
             /// <summary>
             /// Throws an NotSupportedException stating that this collection cannot be modified.
             /// </summary>
-            private void MethodModifiesCollection()
+            private static void MethodModifiesCollection()
             {
                 throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, "read-only collection"));
             }
@@ -380,7 +377,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ReadOnlyList<T> : IList<T>
         {
-            private IList<T> wrappedList;  // The list we are wrapping (never null).
+            private readonly IList<T> wrappedList;  // The list we are wrapping (never null).
 
             /// <summary>
             /// Create a ReadOnlyList wrapped around the given list.
@@ -394,7 +391,7 @@ namespace Wintellect.PowerCollections
             /// <summary>
             /// Throws an NotSupportedException stating that this collection cannot be modified.
             /// </summary>
-            private void MethodModifiesCollection()
+            private static void MethodModifiesCollection()
             {
                 throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, "read-only list"));
             }
@@ -478,7 +475,7 @@ namespace Wintellect.PowerCollections
         private class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         {
             // The dictionary that is wrapped
-            private IDictionary<TKey, TValue> wrappedDictionary;
+            private readonly IDictionary<TKey, TValue> wrappedDictionary;
 
             /// <summary>
             /// Create a read-only dictionary wrapped around the given dictionary.
@@ -492,7 +489,7 @@ namespace Wintellect.PowerCollections
             /// <summary>
             /// Throws an NotSupportedException stating that this collection cannot be modified.
             /// </summary>
-            private void MethodModifiesCollection()
+            private static void MethodModifiesCollection()
             {
                 throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, "read-only dictionary"));
             }
@@ -591,7 +588,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class TypedEnumerator<T> : IEnumerator<T>
         {
-            private IEnumerator wrappedEnumerator;
+            private readonly IEnumerator wrappedEnumerator;
 
             /// <summary>
             /// Create a typed IEnumerator&lt;T&gt;
@@ -637,7 +634,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class TypedEnumerable<T> : IEnumerable<T>
         {
-            private IEnumerable wrappedEnumerable;
+            private readonly IEnumerable wrappedEnumerable;
 
             /// <summary>
             /// Create a typed IEnumerable&lt;T&gt; view
@@ -666,7 +663,7 @@ namespace Wintellect.PowerCollections
         /// interface around it. The generic interface will enumerate the same objects as the 
         /// underlying non-generic collection, but can be used in places that require a generic interface.
         /// The underlying non-generic collection must contain only items that
-        /// are of type <paramref name="T"/> or a type derived from it. This method is useful
+        /// are of type <typeparamref name="T"/> or a type derived from it. This method is useful
         /// when interfacing older, non-generic collections to newer code that uses generic interfaces.
         /// </summary>
         /// <remarks>Some collections implement both generic and non-generic interfaces. For efficiency,
@@ -674,7 +671,7 @@ namespace Wintellect.PowerCollections
         /// If that succeeds, it is returned; otherwise, a wrapper object is created.</remarks>
         /// <typeparam name="T">The item type of the wrapper collection.</typeparam>
         /// <param name="untypedCollection">An untyped collection. This collection should only contain
-        /// items of type <paramref name="T"/> or a type derived from it. </param>
+        /// items of type <typeparamref name="T"/> or a type derived from it. </param>
         /// <returns>A generic IEnumerable&lt;T&gt; wrapper around <paramref name="untypedCollection"/>. 
         /// If <paramref name="untypedCollection"/> is null, then null is returned.</returns>
         public static IEnumerable<T> TypedAs<T>(IEnumerable untypedCollection)
@@ -695,7 +692,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class TypedCollection<T> : ICollection<T>
         {
-            private ICollection wrappedCollection;
+            private readonly ICollection wrappedCollection;
 
             /// <summary>
             /// Create a typed ICollection&lt;T&gt; view
@@ -710,7 +707,7 @@ namespace Wintellect.PowerCollections
             /// <summary>
             /// Throws an NotSupportedException stating that this collection cannot be modified.
             /// </summary>
-            private void MethodModifiesCollection()
+            private static void MethodModifiesCollection()
             {
                 throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, "strongly-typed Collection"));
             }
@@ -759,7 +756,7 @@ namespace Wintellect.PowerCollections
         /// interface around it. The generic interface will enumerate the same objects as the 
         /// underlying non-generic collection, but can be used in places that require a generic interface.
         /// The underlying non-generic collection must contain only items that
-        /// are of type <paramref name="T"/> or a type derived from it. This method is useful
+        /// are of type <typeparamref  name="T"/> or a type derived from it. This method is useful
         /// when interfacing older, non-generic collections to newer code that uses generic interfaces.
         /// </summary>
         /// <remarks><para>Some collections implement both generic and non-generic interfaces. For efficiency,
@@ -768,9 +765,9 @@ namespace Wintellect.PowerCollections
         /// <para>Unlike the generic interface, the non-generic ICollection interfaces does
         /// not contain methods for adding or removing items from the collection. For this reason,
         /// the returned ICollection&lt;T&gt; will be read-only.</para></remarks>
-        /// <typeparam name="T">The item type of the wrapper collection.</typeparam>
+        /// <typeparam  name="T">The item type of the wrapper collection.</typeparam>
         /// <param name="untypedCollection">An untyped collection. This collection should only contain
-        /// items of type <paramref name="T"/> or a type derived from it. </param>
+        /// items of type <typeparamref  name="T"/> or a type derived from it. </param>
         /// <returns>A generic ICollection&lt;T&gt; wrapper around <paramref name="untypedCollection"/>.
         /// If <paramref name="untypedCollection"/> is null, then null is returned.</returns>
         public static ICollection<T> TypedAs<T>(ICollection untypedCollection)
@@ -790,7 +787,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class TypedList<T> : IList<T>
         {
-            private IList wrappedList;
+            private readonly IList wrappedList;
 
             /// <summary>
             /// Create a typed IList&lt;T&gt; view onto
@@ -863,7 +860,7 @@ namespace Wintellect.PowerCollections
         /// interface around it. The generic interface will enumerate the same objects as the 
         /// underlying non-generic list, but can be used in places that require a generic interface.
         /// The underlying non-generic list must contain only items that
-        /// are of type <paramref name="T"/> or a type derived from it. This method is useful
+        /// are of type <typeparamref name="T"/> or a type derived from it. This method is useful
         /// when interfacing older, non-generic lists to newer code that uses generic interfaces.
         /// </summary>
         /// <remarks>Some collections implement both generic and non-generic interfaces. For efficiency,
@@ -871,9 +868,9 @@ namespace Wintellect.PowerCollections
         /// If that succeeds, it is returned; otherwise, a wrapper object is created.</remarks>
         /// <typeparam name="T">The item type of the wrapper list.</typeparam>
         /// <param name="untypedList">An untyped list. This list should only contain
-        /// items of type <paramref name="T"/> or a type derived from it. </param>
-        /// <returns>A generic IList&lt;T&gt; wrapper around <paramref name="untypedlist"/>.
-        /// If <paramref name="untypedlist"/> is null, then null is returned.</returns>
+        /// items of type <typeparamref name="T"/> or a type derived from it. </param>
+        /// <returns>A generic IList&lt;T&gt; wrapper around <paramref name="untypedList"/>.
+        /// If <paramref name="untypedList"/> is null, then null is returned.</returns>
         public static IList<T> TypedAs<T>(IList untypedList)
         {
             if (untypedList == null)
@@ -891,7 +888,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class UntypedCollection<T> : ICollection
         {
-            private ICollection<T> wrappedCollection;
+            private readonly ICollection<T> wrappedCollection;
 
             /// <summary>
             /// Create an untyped ICollection
@@ -978,7 +975,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class UntypedList<T> : IList
         {
-            private IList<T> wrappedList;
+            private readonly IList<T> wrappedList;
 
             /// <summary>
             /// Create a non-generic IList wrapper
@@ -996,7 +993,7 @@ namespace Wintellect.PowerCollections
             /// </summary>
             /// <param name="name">parameter name</param>
             /// <param name="value">parameter value</param>
-            private T ConvertToItemType(string name, object value)
+            private static T ConvertToItemType(string name, object value)
             {
                 try {
                     return (T)value;
@@ -1134,7 +1131,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ArrayWrapper<T> : ListBase<T>, IList
         {
-            private T[] wrappedArray;
+            private readonly T[] wrappedArray;
 
             /// <summary>
             /// Create a list wrapper object on an array.
@@ -1274,7 +1271,7 @@ namespace Wintellect.PowerCollections
         /// with the appropriate replacements made.</returns>
         public static IEnumerable<T> Replace<T>(IEnumerable<T> collection, T itemFind, T replaceWith)
         {
-            return Replace<T>(collection, itemFind, replaceWith, EqualityComparer<T>.Default);
+            return Replace(collection, itemFind, replaceWith, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1335,7 +1332,7 @@ namespace Wintellect.PowerCollections
         /// <para>Although arrays cast to IList&lt;T&gt; are normally read-only, this method
         /// will work correctly and modify an array passed as <paramref name="list"/>.</para></remarks>
         /// <param name="list">The list or array to process.</param>
-        /// <param name="itemFind">The value to find and replace within <paramref name="collection"/>.</param>
+        /// <param name="itemFind">The value to find and replace within <paramtype name="T"/>.</param>
         /// <param name="replaceWith">The new value to replace with.</param>
         public static void ReplaceInPlace<T>(IList<T> list, T itemFind, T replaceWith)
         {
@@ -1350,7 +1347,7 @@ namespace Wintellect.PowerCollections
         /// <remarks>Although arrays cast to IList&lt;T&gt; are normally read-only, this method
         /// will work correctly and modify an array passed as <paramref name="list"/>.</remarks>
         /// <param name="list">The list or array to process.</param>
-        /// <param name="itemFind">The value to find and replace within <paramref name="collection"/>.</param>
+        /// <param name="itemFind">The value to find and replace within <paramtype name="T"/>.</param>
         /// <param name="replaceWith">The new value to replace with.</param>
         /// <param name="equalityComparer">The IEqualityComparer&lt;T&gt; used to compare items for equality. Only the Equals method will be called.</param>
         public static void ReplaceInPlace<T>(IList<T> list, T itemFind, T replaceWith, IEqualityComparer<T> equalityComparer)
@@ -1415,7 +1412,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
         public static IEnumerable<T> RemoveDuplicates<T>(IEnumerable<T> collection)
         {
-            return RemoveDuplicates<T>(collection, EqualityComparer<T>.Default);
+            return RemoveDuplicates(collection, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1433,7 +1430,7 @@ namespace Wintellect.PowerCollections
             if (equalityComparer == null)
                 throw new ArgumentNullException("equalityComparer");
 
-            return RemoveDuplicates<T>(collection, equalityComparer.Equals);
+            return RemoveDuplicates(collection, equalityComparer.Equals);
 
         }
 
@@ -1481,7 +1478,7 @@ namespace Wintellect.PowerCollections
         /// <param name="list">The list or array to process.</param>
         public static void RemoveDuplicatesInPlace<T>(IList<T> list)
         {
-            RemoveDuplicatesInPlace<T>(list, EqualityComparer<T>.Default);
+            RemoveDuplicatesInPlace(list, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1499,7 +1496,7 @@ namespace Wintellect.PowerCollections
             if (equalityComparer == null)
                 throw new ArgumentNullException("equalityComparer");
 
-            RemoveDuplicatesInPlace<T>(list, equalityComparer.Equals);
+            RemoveDuplicatesInPlace(list, equalityComparer.Equals);
 
         }
 
@@ -1571,7 +1568,7 @@ namespace Wintellect.PowerCollections
         /// <returns>The index of the first item in the first run of <paramref name="count"/> consecutive equal items, or -1 if no such run exists..</returns>
         public static int FirstConsecutiveEqual<T>(IList<T> list, int count)
         {
-            return FirstConsecutiveEqual<T>(list, count, EqualityComparer<T>.Default);
+            return FirstConsecutiveEqual(list, count, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1587,7 +1584,7 @@ namespace Wintellect.PowerCollections
             if (equalityComparer == null)
                 throw new ArgumentNullException("equalityComparer");
 
-            return FirstConsecutiveEqual<T>(list, count, equalityComparer.Equals);
+            return FirstConsecutiveEqual(list, count, equalityComparer.Equals);
         }
 
         /// <summary>
@@ -1699,11 +1696,11 @@ namespace Wintellect.PowerCollections
         /// <param name="predicate">A delegate that defined the condition to check for.</param>
         /// <returns>The first item in the collection that matches the condition, or the default value for T (0 or null) if no
         /// item that matches the condition is found.</returns>
-        /// <seealso cref="TryFindFirstWhere"/>
+        /// <seealso cref="Algorithms.TryFindFirstWhere{T}"/>
         public static T FindFirstWhere<T>(IEnumerable<T> collection, Predicate<T> predicate)
         {
             T retval;
-            if (Algorithms.TryFindFirstWhere<T>(collection, predicate, out retval))
+            if (Algorithms.TryFindFirstWhere(collection, predicate, out retval))
                 return retval;
             else
                 return default(T);
@@ -1717,7 +1714,7 @@ namespace Wintellect.PowerCollections
         /// <param name="predicate">A delegate that defined the condition to check for.</param>
         /// <param name="foundItem">Outputs the first item in the collection that matches the condition, if the method returns true.</param>
         /// <returns>True if an item satisfying the condition was found. False if no such item exists in the collection.</returns>
-        /// <seealso cref="FindFirstWhere"/>
+        /// <seealso cref="FindFirstWhere{T}"/>
         public static bool TryFindFirstWhere<T>(IEnumerable<T> collection, Predicate<T> predicate, out T foundItem)
         {
             if (collection == null)
@@ -1751,11 +1748,11 @@ namespace Wintellect.PowerCollections
         /// <param name="predicate">A delegate that defined the condition to check for.</param>
         /// <returns>The last item in the collection that matches the condition, or the default value for T (0 or null) if no
         /// item that matches the condition is found.</returns>
-        /// <seealso cref="TryFindLastWhere"/>
+        /// <seealso cref="TryFindLastWhere{T}"/>
         public static T FindLastWhere<T>(IEnumerable<T> collection, Predicate<T> predicate)
         {
             T retval;
-            if (Algorithms.TryFindLastWhere<T>(collection, predicate, out retval))
+            if (Algorithms.TryFindLastWhere(collection, predicate, out retval))
                 return retval;
             else
                 return default(T);
@@ -1771,7 +1768,7 @@ namespace Wintellect.PowerCollections
         /// <param name="predicate">A delegate that defined the condition to check for.</param>
         /// <param name="foundItem">Outputs the last item in the collection that matches the condition, if the method returns true.</param>
         /// <returns>True if an item satisfying the condition was found. False if no such item exists in the collection.</returns>
-        /// <seealso cref="FindLastWhere"/>
+        /// <seealso cref="FindLastWhere{T}"/>
         public static bool TryFindLastWhere<T>(IEnumerable<T> collection, Predicate<T> predicate, out T foundItem)
         {
             if (collection == null)
@@ -1914,7 +1911,7 @@ namespace Wintellect.PowerCollections
         /// <returns>The index of the first item equal to <paramref name="item"/>. -1 if no such item exists in the list.</returns>
         public static int FirstIndexOf<T>(IList<T> list, T item)
         {
-            return FirstIndexOf<T>(list, item, EqualityComparer<T>.Default);
+            return FirstIndexOf(list, item, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1954,7 +1951,7 @@ namespace Wintellect.PowerCollections
         /// <returns>The index of the last item equal to <paramref name="item"/>. -1 if no such item exists in the list.</returns>
         public static int LastIndexOf<T>(IList<T> list, T item)
         {
-            return LastIndexOf<T>(list, item, EqualityComparer<T>.Default);
+            return LastIndexOf(list, item, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -1992,7 +1989,7 @@ namespace Wintellect.PowerCollections
         /// <returns>An IEnumerable&lt;T&gt; that enumerates the indices of items equal to <paramref name="item"/>. </returns>
         public static IEnumerable<int> IndicesOf<T>(IList<T> list, T item)
         {
-            return IndicesOf<T>(list, item, EqualityComparer<T>.Default);
+            return IndicesOf(list, item, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -2030,7 +2027,7 @@ namespace Wintellect.PowerCollections
         /// -1 if no such item exists in the list.</returns>
         public static int FirstIndexOfMany<T>(IList<T> list, IEnumerable<T> itemsToLookFor)
         {
-            return FirstIndexOfMany<T>(list, itemsToLookFor, EqualityComparer<T>.Default);
+            return FirstIndexOfMany(list, itemsToLookFor, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -2078,7 +2075,7 @@ namespace Wintellect.PowerCollections
         /// <param name="itemsToLookFor">The items to search for.</param>
         /// <param name="predicate">The BinaryPredicate used to compare items for "equality". </param>
         /// <returns>The index of the first item "equal" to any of the items in the collection <paramref name="itemsToLookFor"/>, using 
-        /// <paramref name="BinaryPredicate"/> as the test for equality. 
+        /// <paramtype name="BinaryPredicate{T}"/> as the test for equality. 
         /// -1 if no such item exists in the list.</returns>
         public static int FirstIndexOfMany<T>(IList<T> list, IEnumerable<T> itemsToLookFor, BinaryPredicate<T> predicate)
         {
@@ -2161,7 +2158,7 @@ namespace Wintellect.PowerCollections
         /// <param name="itemsToLookFor">The items to search for.</param>
         /// <param name="predicate">The BinaryPredicate used to compare items for "equality". </param>
         /// <returns>The index of the last item "equal" to any of the items in the collection <paramref name="itemsToLookFor"/>, using 
-        /// <paramref name="BinaryPredicate"/> as the test for equality. 
+        /// <paramtype name="BinaryPredicate"/> as the test for equality. 
         /// -1 if no such item exists in the list.</returns>
         public static int LastIndexOfMany<T>(IList<T> list, IEnumerable<T> itemsToLookFor, BinaryPredicate<T> predicate)
         {
@@ -2196,7 +2193,7 @@ namespace Wintellect.PowerCollections
         /// any of the items in the collection <paramref name="itemsToLookFor"/>. </returns>
         public static IEnumerable<int> IndicesOfMany<T>(IList<T> list, IEnumerable<T> itemsToLookFor)
         {
-            return IndicesOfMany<T>(list, itemsToLookFor, EqualityComparer<T>.Default);
+            return IndicesOfMany(list, itemsToLookFor, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -2241,7 +2238,7 @@ namespace Wintellect.PowerCollections
         /// <param name="predicate">The BinaryPredicate used to compare items for "equality". </param>
         /// <returns>An IEnumerable&lt;T&gt; that enumerates the indices of items "equal" to any of the items 
         /// in the collection <paramref name="itemsToLookFor"/>, using 
-        /// <paramref name="BinaryPredicate"/> as the test for equality. </returns>
+        /// <paramtest name="BinaryPredicate"/> as the test for equality. </returns>
         public static IEnumerable<int> IndicesOfMany<T>(IList<T> list, IEnumerable<T> itemsToLookFor, BinaryPredicate<T> predicate)
         {
             if (list == null)
@@ -2278,7 +2275,7 @@ namespace Wintellect.PowerCollections
         /// <returns>The first index with <paramref name="list"/> that matches the items in <paramref name="pattern"/>.</returns>
         public static int SearchForSubsequence<T>(IList<T> list, IEnumerable<T> pattern)
         {
-            return SearchForSubsequence<T>(list, pattern, EqualityComparer<T>.Default);
+            return SearchForSubsequence(list, pattern, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -2305,7 +2302,7 @@ namespace Wintellect.PowerCollections
                 throw new ArgumentNullException("predicate");
 
             // Put the pattern into an array for performance (don't keep allocating enumerators).
-            T[] patternArray = Algorithms.ToArray<T>(pattern);
+            T[] patternArray = Algorithms.ToArray(pattern);
 
             int listCount = list.Count, patternCount = patternArray.Length;
             if (patternCount == 0)
@@ -2347,7 +2344,7 @@ namespace Wintellect.PowerCollections
             if (equalityComparer == null)
                 throw new ArgumentNullException("equalityComparer");
 
-            return SearchForSubsequence<T>(list, pattern, equalityComparer.Equals);
+            return SearchForSubsequence(list, pattern, equalityComparer.Equals);
         }
 
         #endregion Find and SearchForSubsequence
@@ -2980,7 +2977,7 @@ namespace Wintellect.PowerCollections
         /// <returns>An array with the same size and items as <paramref name="collection"/>, but the items in a randomly chosen order.</returns>
         public static T[] RandomShuffle<T>(IEnumerable<T> collection)
         {
-            return RandomShuffle<T>(collection, GetRandomGenerator());
+            return RandomShuffle(collection, GetRandomGenerator());
         }
 
         /// <summary>
@@ -3023,7 +3020,7 @@ namespace Wintellect.PowerCollections
         /// <param name="list">The list or array to shuffle.</param>
         public static void RandomShuffleInPlace<T>(IList<T> list)
         {
-            RandomShuffleInPlace<T>(list, GetRandomGenerator());
+            RandomShuffleInPlace(list, GetRandomGenerator());
         }
 
         /// <summary>
@@ -3069,7 +3066,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is negative or greater than <paramref name="collection"/>.Count.</exception>
         public static T[] RandomSubset<T>(IEnumerable<T> collection, int count)
         {
-            return RandomSubset<T>(collection, count, GetRandomGenerator());
+            return RandomSubset(collection, count, GetRandomGenerator());
         }
 
         /// <summary>
@@ -3083,7 +3080,7 @@ namespace Wintellect.PowerCollections
         /// <param name="count">The number of items in the subset to choose.</param>
         /// <param name="randomGenerator">The random number generates used to make the selection.</param>
         /// <returns>An array of <paramref name="count"/> items, selected at random from <paramref name="collection"/>.</returns>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is negative or greater than <paramref name="list"/>.Count.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is negative or greater than <paramref name="collection"/>.Count.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="randomGenerator"/> is null.</exception>
         public static T[] RandomSubset<T>(IEnumerable<T> collection, int count, Random randomGenerator)
         {
@@ -3211,7 +3208,7 @@ namespace Wintellect.PowerCollections
         public static IEnumerable<T[]> GenerateSortedPermutations<T>(IEnumerable<T> collection)
             where T: IComparable<T>
         {
-            return GenerateSortedPermutations<T>(collection, Comparer<T>.Default);
+            return GenerateSortedPermutations(collection, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3300,7 +3297,7 @@ namespace Wintellect.PowerCollections
         /// reuse the same array instance.</returns>
         public static IEnumerable<T[]> GenerateSortedPermutations<T>(IEnumerable<T> collection, Comparison<T> comparison)
         {
-            return GenerateSortedPermutations(collection, Comparers.ComparerFromComparison<T>(comparison));
+            return GenerateSortedPermutations(collection, Comparers.ComparerFromComparison(comparison));
         }
 
         #endregion Shuffles and Permutations
@@ -3320,7 +3317,7 @@ namespace Wintellect.PowerCollections
         public static T Maximum<T>(IEnumerable<T> collection)
             where T : IComparable<T>
         {
-            return Maximum<T>(collection, Comparer<T>.Default);
+            return Maximum(collection, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3371,7 +3368,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> or <paramref name="comparison"/> is null.</exception>
         public static T Maximum<T>(IEnumerable<T> collection, Comparison<T> comparison)
         {
-            return Maximum<T>(collection, Comparers.ComparerFromComparison<T>(comparison));
+            return Maximum(collection, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3387,7 +3384,7 @@ namespace Wintellect.PowerCollections
         public static T Minimum<T>(IEnumerable<T> collection)
             where T : IComparable<T>
         {
-            return Minimum<T>(collection, Comparer<T>.Default);
+            return Minimum(collection, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3438,7 +3435,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> or <paramref name="comparison"/> is null.</exception>
         public static T Minimum<T>(IEnumerable<T> collection, Comparison<T> comparison)
         {
-            return Minimum<T>(collection, Comparers.ComparerFromComparison<T>(comparison));
+            return Minimum(collection, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3454,7 +3451,7 @@ namespace Wintellect.PowerCollections
         public static int IndexOfMaximum<T>(IList<T> list)
            where T : IComparable<T>
         {
-            return IndexOfMaximum<T>(list, Comparer<T>.Default);
+            return IndexOfMaximum(list, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3503,7 +3500,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="list"/> or <paramref name="comparison"/> is null.</exception>
         public static int IndexOfMaximum<T>(IList<T> list, Comparison<T> comparison)
         {
-            return IndexOfMaximum<T>(list, Comparers.ComparerFromComparison<T>(comparison));
+            return IndexOfMaximum(list, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3520,7 +3517,7 @@ namespace Wintellect.PowerCollections
         public static int IndexOfMinimum<T>(IList<T> list)
             where T : IComparable<T>
         {
-            return IndexOfMinimum<T>(list, Comparer<T>.Default);
+            return IndexOfMinimum(list, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3571,7 +3568,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="list"/> or <paramref name="comparison"/> is null.</exception>
         public static int IndexOfMinimum<T>(IList<T> list, Comparison<T> comparison)
         {
-            return IndexOfMinimum<T>(list, Comparers.ComparerFromComparison<T>(comparison));
+            return IndexOfMinimum(list, Comparers.ComparerFromComparison(comparison));
         }
 
         #endregion Minimum and Maximum
@@ -3588,7 +3585,7 @@ namespace Wintellect.PowerCollections
         public static T[] Sort<T>(IEnumerable<T> collection)
             where T : IComparable<T>
         {
-            return Sort<T>(collection, Comparer<T>.Default);
+            return Sort(collection, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3623,7 +3620,7 @@ namespace Wintellect.PowerCollections
         /// <returns>An array containing the sorted version of the collection.</returns>
         public static T[] Sort<T>(IEnumerable<T> collection, Comparison<T> comparison)
         {
-            return Sort<T>(collection, Comparers.ComparerFromComparison<T>(comparison));
+            return Sort(collection, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3639,7 +3636,7 @@ namespace Wintellect.PowerCollections
         public static void SortInPlace<T>(IList<T> list)
             where T : IComparable<T>
         {
-            SortInPlace<T>(list, Comparer<T>.Default);
+            SortInPlace(list, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -3794,7 +3791,7 @@ namespace Wintellect.PowerCollections
         /// <param name="comparison">The comparison delegate used to compare items in the collection.</param>
         public static void SortInPlace<T>(IList<T> list, Comparison<T> comparison)
         {
-            SortInPlace<T>(list, Comparers.ComparerFromComparison<T>(comparison));
+            SortInPlace(list, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3831,7 +3828,7 @@ namespace Wintellect.PowerCollections
 
             array = Algorithms.ToArray(collection);
 
-            StableSortInPlace<T>(Algorithms.ReadWriteList<T>(array), comparer);
+            StableSortInPlace(Algorithms.ReadWriteList(array), comparer);
             return array;
         }
 
@@ -3848,7 +3845,7 @@ namespace Wintellect.PowerCollections
         /// <returns>An array containing the sorted version of the collection.</returns>
         public static T[] StableSort<T>(IEnumerable<T> collection, Comparison<T> comparison)
         {
-            return StableSort<T>(collection, Comparers.ComparerFromComparison<T>(comparison));
+            return StableSort(collection, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -3863,7 +3860,7 @@ namespace Wintellect.PowerCollections
         public static void StableSortInPlace<T>(IList<T> list)
             where T : IComparable<T>
         {
-            StableSortInPlace<T>(list, Comparer<T>.Default);
+            StableSortInPlace(list, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -4029,7 +4026,7 @@ namespace Wintellect.PowerCollections
         /// <param name="comparison">The comparison delegate used to compare items in the collection.</param>
         public static void StableSortInPlace<T>(IList<T> list, Comparison<T> comparison)
         {
-            StableSortInPlace<T>(list, Comparers.ComparerFromComparison<T>(comparison));
+            StableSortInPlace(list, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -4046,7 +4043,7 @@ namespace Wintellect.PowerCollections
         public static int BinarySearch<T>(IList<T> list, T item, out int index)
             where T: IComparable<T>
         {
-            return BinarySearch<T>(list, item, Comparer<T>.Default, out index);
+            return BinarySearch(list, item, Comparer<T>.Default, out index);
         }
 
         /// <summary>
@@ -4061,7 +4058,9 @@ namespace Wintellect.PowerCollections
         /// value is zero, indicating that <paramref name="item"/> was not present in the list, then this
         /// returns the index at which <paramref name="item"/> could be inserted to maintain the sorted
         /// order of the list.</param>
-        /// <returns>The number of items equal to <paramref name="item"/> that appear in the list.</returns>
+        /// <returns>
+        /// The number of items equal to <paramref name="item"/> that appear in the list.
+        /// </returns>
         public static int BinarySearch<T>(IList<T> list, T item, IComparer<T> comparer, out int index)
         {
             if (list == null)
@@ -4102,7 +4101,7 @@ namespace Wintellect.PowerCollections
                             r = m;
                         }
                     }
-                    System.Diagnostics.Debug.Assert(l == r);
+                    System.Diagnostics.Debug.Assert(l == r, "Left and Right were not equal");
                     index = l;
 
                     // Find the end of the run.
@@ -4120,7 +4119,7 @@ namespace Wintellect.PowerCollections
                             r = m;
                         }
                     }
-                    System.Diagnostics.Debug.Assert(l == r);
+                    System.Diagnostics.Debug.Assert(l == r, "Left and Right were not equal");
                     return l - index;
                 }
             }
@@ -4145,7 +4144,7 @@ namespace Wintellect.PowerCollections
         /// <returns>The number of items equal to <paramref name="item"/> that appear in the list.</returns>
         public static int BinarySearch<T>(IList<T> list, T item, Comparison<T> comparison, out int index)
         {
-            return BinarySearch<T>(list, item, Comparers.ComparerFromComparison<T>(comparison), out index);
+            return BinarySearch(list, item, Comparers.ComparerFromComparison(comparison), out index);
         }
 
         /// <summary>
@@ -4161,7 +4160,7 @@ namespace Wintellect.PowerCollections
         public static IEnumerable<T> MergeSorted<T>(params IEnumerable<T>[] collections)
             where T : IComparable<T>
         {
-            return MergeSorted<T>(Comparer<T>.Default, collections);
+            return MergeSorted(Comparer<T>.Default, collections);
         }
 
         /// <summary>
@@ -4243,7 +4242,7 @@ namespace Wintellect.PowerCollections
         /// in sorted order. </returns>
         public static IEnumerable<T> MergeSorted<T>(Comparison<T> comparison, params IEnumerable<T>[] collections)
         {
-            return MergeSorted<T>(Comparers.ComparerFromComparison<T>(comparison), collections);
+            return MergeSorted(Comparers.ComparerFromComparison(comparison), collections);
         }
 
 
@@ -4267,7 +4266,7 @@ namespace Wintellect.PowerCollections
         public static int LexicographicalCompare<T>(IEnumerable<T> sequence1, IEnumerable<T> sequence2)
             where T : IComparable<T>
         {
-            return LexicographicalCompare<T>(sequence1, sequence2, Comparer<T>.Default);
+            return LexicographicalCompare(sequence1, sequence2, Comparer<T>.Default);
         }
 
         /// <summary>
@@ -4287,7 +4286,7 @@ namespace Wintellect.PowerCollections
         /// Zero if <paramref name="sequence1"/> is equal to <paramref name="sequence2"/>.</returns>
         public static int LexicographicalCompare<T>(IEnumerable<T> sequence1, IEnumerable<T> sequence2, Comparison<T> comparison)
         {
-            return LexicographicalCompare<T>(sequence1, sequence2, Comparers.ComparerFromComparison(comparison));
+            return LexicographicalCompare(sequence1, sequence2, Comparers.ComparerFromComparison(comparison));
         }
 
         /// <summary>
@@ -4351,7 +4350,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class LexicographicalComparerClass<T> : IComparer<IEnumerable<T>>
         {
-            IComparer<T> itemComparer;
+            readonly IComparer<T> itemComparer;
 
             /// <summary>
             /// Creates a new instance that comparer sequences of T by their lexicographical
@@ -4365,7 +4364,7 @@ namespace Wintellect.PowerCollections
 
             public int Compare(IEnumerable<T> x, IEnumerable<T> y)
             {
-                return LexicographicalCompare<T>(x, y, itemComparer);
+                return LexicographicalCompare(x, y, itemComparer);
             }
 
 
@@ -4397,7 +4396,7 @@ namespace Wintellect.PowerCollections
         public static IComparer<IEnumerable<T>> GetLexicographicalComparer<T>()
             where T: IComparable<T>
         {
-            return GetLexicographicalComparer<T>(Comparer<T>.Default);
+            return GetLexicographicalComparer(Comparer<T>.Default);
         }
 
         /// <summary>
@@ -4439,7 +4438,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ReverseComparerClass<T> : IComparer<T>
         {
-            IComparer<T> comparer;
+            readonly IComparer<T> comparer;
 
             /// <summary>
             /// </summary>
@@ -4497,7 +4496,7 @@ namespace Wintellect.PowerCollections
         {
             public bool Equals(T x, T y)
             {
-                return ((object)x == (object)y);
+                return (x == y);
             }
 
             public int GetHashCode(T obj)
@@ -4558,7 +4557,7 @@ namespace Wintellect.PowerCollections
             if (comparison == null)
                 throw new ArgumentNullException("comparison");
 
-            return Comparers.ComparerFromComparison<T>(comparison);
+            return Comparers.ComparerFromComparison(comparison);
         }
 
         /// <summary>
@@ -4584,7 +4583,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class CollectionEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
         {
-            private IEqualityComparer<T> equalityComparer;
+            private readonly IEqualityComparer<T> equalityComparer;
 
             public CollectionEqualityComparer(IEqualityComparer<T> equalityComparer)
             {
@@ -4593,7 +4592,7 @@ namespace Wintellect.PowerCollections
 
             public bool Equals(IEnumerable<T> x, IEnumerable<T> y)
             {
-                return Algorithms.EqualCollections<T>(x, y, equalityComparer);
+                return Algorithms.EqualCollections(x, y, equalityComparer);
             }
 
             public int GetHashCode(IEnumerable<T> obj)
@@ -4625,7 +4624,7 @@ namespace Wintellect.PowerCollections
         /// </example>
         /// <returns>IEqualityComparer&lt;IEnumerable&lt;T&gt;&gt; implementation suitable for 
         /// comparing collections of T for equality.</returns>
-        /// <seealso cref="Algorithms.EqualCollections"/>
+        /// <seealso cref="Algorithms.EqualCollections{T}"/>
         public static IEqualityComparer<IEnumerable<T>> GetCollectionEqualityComparer<T>()
         {
             return GetCollectionEqualityComparer(EqualityComparer<T>.Default);
@@ -4649,7 +4648,7 @@ namespace Wintellect.PowerCollections
         /// <param name="equalityComparer">An IEqualityComparer&lt;T&gt; implementation used to compare individual T's.</param>
         /// <returns>IEqualityComparer&lt;IEnumerable&lt;T&gt;&gt; implementation suitable for 
         /// comparing collections of T for equality.</returns>
-        /// <seealso cref="Algorithms.EqualCollections"/>
+        /// <seealso cref="Algorithms.EqualCollections{T}"/>
         public static IEqualityComparer<IEnumerable<T>> GetCollectionEqualityComparer<T>(IEqualityComparer<T> equalityComparer)
         {
             if (equalityComparer == null)
@@ -4666,7 +4665,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class SetEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
         {
-            private IEqualityComparer<T> equalityComparer;
+            private readonly IEqualityComparer<T> equalityComparer;
 
             public SetEqualityComparer(IEqualityComparer<T> equalityComparer)
             {
@@ -4675,7 +4674,7 @@ namespace Wintellect.PowerCollections
 
             public bool Equals(IEnumerable<T> x, IEnumerable<T> y)
             {
-                return Algorithms.EqualSets<T>(x, y, equalityComparer);
+                return Algorithms.EqualSets(x, y, equalityComparer);
             }
 
             public int GetHashCode(IEnumerable<T> obj)
@@ -4707,7 +4706,7 @@ namespace Wintellect.PowerCollections
         /// </example>
         /// <returns>IEqualityComparer&lt;IEnumerable&lt;T&gt;&gt; implementation suitable for 
         /// comparing collections of T for equality, without regard to order.</returns>
-        /// <seealso cref="Algorithms.EqualSets"/>
+        /// <seealso cref="Algorithms.EqualSets{T}"/>
         public static IEqualityComparer<IEnumerable<T>> GetSetEqualityComparer<T>()
         {
             return GetSetEqualityComparer(EqualityComparer<T>.Default);
@@ -5428,7 +5427,7 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="dest"/> is null.</exception>
         public static void Copy<T>(IEnumerable<T> source, IList<T> dest, int destIndex)
         {
-            Copy<T>(source, dest, destIndex, int.MaxValue);
+            Copy(source, dest, destIndex, int.MaxValue);
         }
 
         /// <summary>
@@ -5457,7 +5456,7 @@ namespace Wintellect.PowerCollections
                 // Overwrite items to the end of the destination array. If we hit the end, throw.
                 while (sourceEnum.MoveNext()) {
                     if (destIndex >= dest.Length)
-                        throw new ArgumentException(Strings.ArrayTooSmall, "array");
+                        throw new ArgumentException(Strings.ArrayTooSmall, "dest");
                     dest[destIndex++] = sourceEnum.Current;
                 }
             }

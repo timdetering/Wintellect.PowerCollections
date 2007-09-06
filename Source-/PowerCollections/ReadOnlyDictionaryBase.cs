@@ -11,70 +11,56 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+
 namespace Wintellect.PowerCollections
 {
     /// <summary>
-    /// DictionaryBase is a base class that can be used to more easily implement the
+    /// ReadOnlyDictionaryBase is a base class that can be used to more easily implement the
     /// generic IDictionary&lt;T&gt; and non-generic IDictionary interfaces.
     /// </summary>
     /// <remarks>
-    /// <para>To use DictionaryBase as a base class, the derived class must override
-    /// Count, GetEnumerator, TryGetValue, Clear, Remove, and the indexer set accessor. </para>
+    /// <para>To use ReadOnlyDictionaryBase as a base class, the derived class must override
+    /// Count, TryGetValue, GetEnumerator. </para>
     /// </remarks>
     /// <typeparam name="TKey">The key type of the dictionary.</typeparam>
     /// <typeparam name="TValue">The value type of the dictionary.</typeparam>
     [Serializable]
     [DebuggerDisplay("{DebuggerDisplayString()}")]
-    public abstract class DictionaryBase<TKey, TValue> : CollectionBase<KeyValuePair<TKey, TValue>>,
+    public abstract class ReadOnlyDictionaryBase<TKey, TValue> : ReadOnlyCollectionBase<KeyValuePair<TKey, TValue>>,
                                                                                                   IDictionary<TKey, TValue>, IDictionary
     {
+
         /// <summary>
-        /// Creates a new DictionaryBase. 
+        /// Throws an NotSupportedException stating that this collection cannot be modified.
         /// </summary>
-        protected DictionaryBase()
+        private void MethodModifiesCollection()
         {
+            throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, Util.SimpleClassName(this.GetType())));
         }
 
         /// <summary>
-        /// Clears the dictionary. This method must be overridden in the derived class.
+        /// Adds a new key-value pair to the dictionary. Always throws an exception
+        /// indicating that this method is not supported in a read-only dictionary.
         /// </summary>
-        public abstract override void Clear();
+        /// <param name="key">Key to add.</param>
+        /// <param name="value">Value to associated with the key.</param>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
+        {
+            MethodModifiesCollection();
+        }
 
         /// <summary>
-        /// Removes a key from the dictionary. This method must be overridden in the derived class.
+        /// Removes a key from the dictionary. Always throws an exception
+        /// indicating that this method is not supported in a read-only dictionary.
         /// </summary>
         /// <param name="key">Key to remove from the dictionary.</param>
         /// <returns>True if the key was found, false otherwise.</returns>
-        public abstract bool Remove(TKey key);
-
-        /// <summary>
-        /// Determines if this dictionary contains a key equal to <paramref name="key"/>. If so, the value
-        /// associated with that key is returned through the value parameter. This method must be
-        /// overridden by the derived class.
-        /// </summary>
-        /// <param name="key">The key to search for.</param>
-        /// <param name="value">Returns the value associated with key, if true was returned.</param>
-        /// <returns>True if the dictionary contains key. False if the dictionary does not contain key.</returns>
-        public abstract bool TryGetValue(TKey key, out TValue value);
-
-        /// <summary>
-        /// Adds a new key-value pair to the dictionary. 
-        /// </summary>
-        /// <remarks>The default implementation of this method
-        /// checks to see if the key already exists using 
-        /// ContainsKey, then calls the indexer setter if the key doesn't
-        /// already exist. </remarks>
-        /// <param name="key">Key to add.</param>
-        /// <param name="value">Value to associated with the key.</param>
-        /// <exception cref="ArgumentException">key is already present in the dictionary</exception>
-        public virtual void Add(TKey key, TValue value)
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        public virtual bool Remove(TKey key)
         {
-            if (ContainsKey(key)) {
-                throw new ArgumentException(Strings.KeyAlreadyPresent, "key");
-            }
-            else {
-                this[key] = value;
-            }
+            MethodModifiesCollection();
+            return false;
         }
 
         /// <summary>
@@ -92,19 +78,33 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// The indexer of the dictionary. This is used to store keys and values and
-        /// retrieve values from the dictionary. The setter
-        /// accessor must be overridden in the derived class.
+        /// Determines if this dictionary contains a key equal to <paramref name="key"/>. If so, the value
+        /// associated with that key is returned through the value parameter. This method must be overridden 
+        /// in the derived class.
         /// </summary>
+        /// <param name="key">The key to search for.</param>
+        /// <param name="value">Returns the value associated with key, if true was returned.</param>
+        /// <returns>True if the dictionary contains key. False if the dictionary does not contain key.</returns>
+        public abstract bool TryGetValue(TKey key, out TValue value);
+
+        /// <summary>
+        /// The indexer of the dictionary. The set accessor throws an NotSupportedException
+        /// stating the dictionary is read-only.
+        /// </summary>
+        /// <remarks>The get accessor is implemented by calling TryGetValue.</remarks>
         /// <param name="key">Key to find in the dictionary.</param>
         /// <returns>The value associated with the key.</returns>
+        /// <exception cref="NotSupportedException">Always thrown from the set accessor, indicating
+        /// that the dictionary is read only.</exception>
         /// <exception cref="KeyNotFoundException">Thrown from the get accessor if the key
-        /// was not found in the dictionary.</exception>
-        public virtual TValue this[TKey key] {
+        /// was not found.</exception>
+        public virtual TValue this[TKey key]
+        {
             get
             {
                 TValue value;
-                if (TryGetValue(key, out value))
+                bool found = TryGetValue(key, out value);
+                if (found)
                     return value;
                 else
                     throw new KeyNotFoundException(Strings.KeyNotFound);
@@ -112,7 +112,7 @@ namespace Wintellect.PowerCollections
 
             set
             {
-                throw new NotImplementedException(Strings.MustOverrideIndexerSet);
+                MethodModifiesCollection();
             }
         }
 
@@ -130,7 +130,7 @@ namespace Wintellect.PowerCollections
             builder.Append("{");
 
             // Call ToString on each item and put it in.
-            foreach (KeyValuePair<TKey,TValue> pair in this) {
+            foreach (KeyValuePair<TKey, TValue> pair in this) {
                 if (!firstItem)
                     builder.Append(", ");
 
@@ -153,21 +153,7 @@ namespace Wintellect.PowerCollections
             return builder.ToString();
         }
 
-        /// <summary>
-        /// Provides a read-only view of this dictionary. The returned IDictionary&lt;TKey,TValue&gt; provides
-        /// a view of the dictionary that prevents modifications to the dictionary. Use the method to provide
-        /// access to the dictionary without allowing changes. Since the returned object is just a view,
-        /// changes to the dictionary will be reflected in the view.
-        /// </summary>
-        /// <returns>An IIDictionary&lt;TKey,TValue&gt; that provides read-only access to the dictionary.</returns>
-        public virtual new IDictionary<TKey,TValue> AsReadOnly()
-        {
-            return Algorithms.ReadOnly<TKey,TValue>(this);
-        }
-
-
-
-        #region IDictionary<TKey,TValue> Members
+       #region IDictionary<TKey,TValue> Members
 
         /// <summary>
         /// Returns a collection of the keys in this dictionary. 
@@ -193,16 +179,6 @@ namespace Wintellect.PowerCollections
         #region ICollection<KeyValuePair<TKey,TValue>> Members
 
         /// <summary>
-        /// Adds a key-value pair to the collection. This implementation calls the Add method
-        /// with the Key and Value from the item.
-        /// </summary>
-        /// <param name="item">A KeyValuePair contains the Key and Value to add.</param>
-        public override void Add(KeyValuePair<TKey, TValue> item)
-        {
-            this.Add(item.Key, item.Value);
-        }
-
-        /// <summary>
         /// Determines if a dictionary contains a given KeyValuePair. This implementation checks to see if the
         /// dictionary contains the given key, and if the value associated with the key is equal to (via object.Equals)
         /// the value.
@@ -219,59 +195,30 @@ namespace Wintellect.PowerCollections
             }
         }
 
-        /// <summary>
-        /// Determines if a dictionary contains a given KeyValuePair, and if so, removes it. This implementation checks to see if the
-        /// dictionary contains the given key, and if the value associated with the key is equal to (via object.Equals)
-        /// the value. If so, the key-value pair is removed.
-        /// </summary>
-        /// <param name="item">A KeyValuePair containing the Key and Value to check for.</param>
-        /// <returns>True if the item was found and removed. False otherwise.</returns>
-        public override bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            if (((ICollection<KeyValuePair<TKey, TValue>>)this).Contains(item))
-                return this.Remove(item.Key);
-            else
-                return false;
-        }
-
         #endregion
 
         #region IDictionary Members
 
         /// <summary>
-        /// Check that the given parameter is of the expected generic type. Throw an ArgumentException
-        /// if it isn't.
-        /// </summary>
-        /// <typeparam name="ExpectedType">Expected type of the parameter</typeparam>
-        /// <param name="name">parameter name</param>
-        /// <param name="value">parameter value</param>
-        private void CheckGenericType<ExpectedType>(string name, object value)
-        {
-            if (!(value is ExpectedType))
-                throw new ArgumentException(string.Format(Strings.WrongType, value, typeof(ExpectedType)), name);
-        }
-
-        /// <summary>
-        /// Adds a key-value pair to the collection. If key or value are not of the expected types, an
-        /// ArgumentException is thrown. If both key and value are of the expected types, the (overridden)
-        /// Add method is called with the key and value to add.
+        /// Adds a key-value pair to the collection. Always throws an exception
+        /// indicating that this method is not supported in a read-only dictionary.
         /// </summary>
         /// <param name="key">Key to add to the dictionary.</param>
         /// <param name="value">Value to add to the dictionary.</param>
-        /// <exception cref="ArgumentException">key or value are not of the expected type for this dictionary.</exception>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
         void IDictionary.Add(object key, object value)
         {
-            CheckGenericType<TKey>("key", key);
-            CheckGenericType<TValue>("value", value);
-            Add((TKey)key, (TValue)value);
+            MethodModifiesCollection();
         }
 
         /// <summary>
-        /// Clears this dictionary. Calls the (overridden) Clear method.
+        /// Clears this dictionary. Always throws an exception
+        /// indicating that this method is not supported in a read-only dictionary.
         /// </summary>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
         void IDictionary.Clear()
         {
-            this.Clear();
+            MethodModifiesCollection();
         }
 
         /// <summary>
@@ -290,17 +237,14 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// Removes the key (and associated value) from the collection that is equal to the passed in key. If
-        /// no key in the dictionary is equal to the passed key, the 
-        /// dictionary is unchanged. Calls the (overridden) Remove method. If key is not of the correct
-        /// TKey for the dictionary, the dictionary is unchanged.
+        /// Removes the key (and associated value) from the collection that is equal to the passed in key. Always throws an exception
+        /// indicating that this method is not supported in a read-only dictionary.
         /// </summary>
         /// <param name="key">The key to remove.</param>
-        /// <exception cref="ArgumentException">key could not be converted to TKey.</exception>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
         void IDictionary.Remove(object key)
         {
-            if (key is TKey || key == null)
-                Remove((TKey)key);
+            MethodModifiesCollection();
         }
 
         /// <summary>
@@ -330,21 +274,21 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// Returns whether this dictionary is fixed size. This implemented always returns false.
+        /// Returns whether this dictionary is fixed size. 
         /// </summary>
-        /// <value>Always returns false.</value>
+        /// <value>Always returns true.</value>
         bool IDictionary.IsFixedSize
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
-        /// Returns if this dictionary is read-only. This implementation always returns false.
+        /// Returns if this dictionary is read-only. 
         /// </summary>
-        /// <value>Always returns false.</value>
+        /// <value>Always returns true.</value>
         bool IDictionary.IsReadOnly
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
@@ -368,13 +312,13 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// Gets or sets the value associated with a given key. When getting a value, if this
-        /// key is not found in the collection, then null is returned. When setting
-        /// a value, the value replaces any existing value in the dictionary. If either the key or value
-        /// are not of the correct type for this dictionary, an ArgumentException is thrown.
+        /// Gets the value associated with a given key. When getting a value, if this
+        /// key is not found in the collection, then null is returned. If the key is not of the correct type 
+        /// for this dictionary, null is returned.
         /// </summary>
         /// <value>The value associated with the key, or null if the key was not present.</value>
-        /// <exception cref="ArgumentException">key could not be converted to TKey, or value could not be converted to TValue.</exception>
+        /// <exception cref="NotSupportedException">Always thrown from the set accessor, indicating
+        /// that the dictionary is read only.</exception>
         object IDictionary.this[object key]
         {
             get
@@ -396,9 +340,7 @@ namespace Wintellect.PowerCollections
             }
             set
             {
-                CheckGenericType<TKey>("key", key);
-                CheckGenericType<TValue>("value", value);
-                this[(TKey)key] = (TValue)value;
+                MethodModifiesCollection();
             }
         }
 
@@ -410,11 +352,11 @@ namespace Wintellect.PowerCollections
         /// format to ToString(), but is limited to 250-300 characters or so, so as not to overload the debugger.
         /// </summary>
         /// <returns>The string representation of the items in the collection, similar in format to ToString().</returns>
-       new internal string DebuggerDisplayString()
-       {
-           const int MAXLENGTH = 250;
+        new internal string DebuggerDisplayString()
+        {
+            const int MAXLENGTH = 250;
 
-           bool firstItem = true;
+            bool firstItem = true;
 
             System.Text.StringBuilder builder = new System.Text.StringBuilder();
 
@@ -449,6 +391,7 @@ namespace Wintellect.PowerCollections
             return builder.ToString();
         }
 
+
         #region Keys and Values collections
 
         /// <summary>
@@ -458,13 +401,13 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class KeysCollection : ReadOnlyCollectionBase<TKey>
         {
-            private DictionaryBase<TKey, TValue> myDictionary;
+            private readonly ReadOnlyDictionaryBase<TKey, TValue> myDictionary;
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="myDictionary">The dictionary this is associated with.</param>
-            public KeysCollection(DictionaryBase<TKey, TValue> myDictionary) 
+            public KeysCollection(ReadOnlyDictionaryBase<TKey, TValue> myDictionary)
             {
                 this.myDictionary = myDictionary;
             }
@@ -487,15 +430,15 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// A private class that implements ICollection&lt;TValue&gt; and ICollection for the
+        /// A private class that implements ICollection&lt;TKey&gt; and ICollection for the
         /// Values collection. The collection is read-only.
         /// </summary>
         [Serializable]
         private sealed class ValuesCollection : ReadOnlyCollectionBase<TValue>
         {
-            private DictionaryBase<TKey, TValue> myDictionary;
+            private readonly ReadOnlyDictionaryBase<TKey, TValue> myDictionary;
 
-            public ValuesCollection(DictionaryBase<TKey, TValue> myDictionary) 
+            public ValuesCollection(ReadOnlyDictionaryBase<TKey, TValue> myDictionary)
             {
                 this.myDictionary = myDictionary;
             }
@@ -522,7 +465,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class DictionaryEnumeratorWrapper : IDictionaryEnumerator
         {
-            private IEnumerator<KeyValuePair<TKey, TValue>> enumerator;
+            private readonly IEnumerator<KeyValuePair<TKey, TValue>> enumerator;
 
             /// <summary>
             /// Constructor.
@@ -588,5 +531,6 @@ namespace Wintellect.PowerCollections
         }
     }
 }
+
 
 

@@ -7,7 +7,6 @@
 //******************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -33,13 +32,6 @@ namespace Wintellect.PowerCollections
     public abstract class MultiDictionaryBase<TKey, TValue> : CollectionBase<KeyValuePair<TKey, ICollection<TValue>>>,
                                                                                                IDictionary<TKey, ICollection<TValue>>
     {
-        /// <summary>
-        /// Creates a new MultiDictionaryBase. 
-        /// </summary>
-        protected MultiDictionaryBase()
-        {
-        }
-
         /// <summary>
         /// Clears the dictionary. This method must be overridden in the derived class.
         /// </summary>
@@ -552,8 +544,8 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class ValuesForKeyCollection : CollectionBase<TValue>
         {
-            private MultiDictionaryBase<TKey, TValue> myDictionary;
-            private TKey key;
+            private readonly MultiDictionaryBase<TKey, TValue> myDictionary;
+            private readonly TKey key;
 
             /// <summary>
             /// Constructor. Initializes this collection.
@@ -608,7 +600,7 @@ namespace Wintellect.PowerCollections
             /// doesn't yield any values. A helper.
             /// </summary>
             /// <returns>An IEnumerator&lt;TValue&gt; that yields no values.</returns>
-            private IEnumerator<TValue> NoValues()
+            private static IEnumerator<TValue> NoValues()
             {
                 yield break;
             }
@@ -644,7 +636,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class KeysCollection : ReadOnlyCollectionBase<TKey>
         {
-            private MultiDictionaryBase<TKey, TValue> myDictionary;
+            private readonly MultiDictionaryBase<TKey, TValue> myDictionary;
 
             /// <summary>
             /// Constructor.
@@ -678,7 +670,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class ValuesCollection : ReadOnlyCollectionBase<TValue>
         {
-            private MultiDictionaryBase<TKey, TValue> myDictionary;
+            private readonly MultiDictionaryBase<TKey, TValue> myDictionary;
 
             public ValuesCollection(MultiDictionaryBase<TKey, TValue> myDictionary)
             {
@@ -723,7 +715,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class EnumerableValuesCollection : ReadOnlyCollectionBase<ICollection<TValue>>
         {
-            private MultiDictionaryBase<TKey, TValue> myDictionary;
+            private readonly MultiDictionaryBase<TKey, TValue> myDictionary;
 
             public EnumerableValuesCollection(MultiDictionaryBase<TKey, TValue> myDictionary)
             {
@@ -784,7 +776,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class KeyValuePairsCollection : ReadOnlyCollectionBase<KeyValuePair<TKey,TValue>>
         {
-            private MultiDictionaryBase<TKey, TValue> myDictionary;
+            private readonly MultiDictionaryBase<TKey, TValue> myDictionary;
 
             public KeyValuePairsCollection(MultiDictionaryBase<TKey, TValue> myDictionary)
             {

@@ -13,39 +13,30 @@ using System.Collections.Generic;
 namespace Wintellect.PowerCollections
 {
     /// <summary>
-    /// ReadOnlyListBase is an abstract class that can be used as a base class for a read-only collection that needs 
+    /// ListBase is an abstract class that can be used as a base class for a read-write collection that needs 
     /// to implement the generic IList&lt;T&gt; and non-generic IList collections. The derived class needs
-    /// to override the Count property and the get part of the indexer. The implementation
+    /// to override the following methods: Count, Clear, Insert, RemoveAt, and the indexer. The implementation
     /// of all the other methods in IList&lt;T&gt; and IList are handled by ListBase.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public abstract class ReadOnlyListBase<T> : ReadOnlyCollectionBase<T>, IList<T>, IList
+    public abstract class ListBase<T> : CollectionBase<T>, IList<T>, IList
     {
-        /// <summary>
-        /// Creates a new ReadOnlyListBase.
-        /// </summary>
-        protected ReadOnlyListBase()
-        {
-        }
-
-        /// <summary>
-        /// Throws an NotSupportedException stating that this collection cannot be modified.
-        /// </summary>
-        private void MethodModifiesCollection()
-        {
-            throw new NotSupportedException(string.Format(Strings.CannotModifyCollection, Util.SimpleClassName(this.GetType())));
-        }
-
         /// <summary>
         /// The property must be overridden by the derived class to return the number of 
         /// items in the list.
         /// </summary>
         /// <value>The number of items in the list.</value>
-        public abstract override int Count { get;}
+        public abstract override int Count { get;} 
 
         /// <summary>
-        /// The get part of the indexer must be overridden by the derived class to get 
+        /// This method must be overridden by the derived class to empty the list
+        /// of all items.
+        /// </summary>
+        public abstract override void Clear();
+
+        /// <summary>
+        /// The indexer must be overridden by the derived class to get and set
         /// values of the list at a particular index.
         /// </summary>
         /// <param name="index">The index in the list to get or set an item at. The
@@ -53,23 +44,43 @@ namespace Wintellect.PowerCollections
         /// <returns>The item at the given index.</returns>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
         /// less than zero or greater than or equal to Count.</exception>
-        public virtual T this[int index]
+        public abstract T this[int index]
         {
-            get
-            {
-                throw new NotImplementedException(Strings.MustOverrideIndexerGet);
-            }
-
-            set
-            {
-                MethodModifiesCollection();
-            }
+            get;
+            set;
         }
+
+        /// <summary>
+        /// This method must be overridden by the derived class to insert a new
+        /// item at the given index. 
+        /// </summary>
+        /// <param name="index">The index in the list to insert the item at. After the
+        /// insertion, the inserted item is located at this index. The
+        /// first item in the list has index 0.</param>
+        /// <param name="item">The item to insert at the given index.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
+        /// less than zero or greater than Count.</exception>
+        public abstract void Insert(int index, T item);
+
+        /// <summary>
+        /// This method must be overridden by the derived class to remove the
+        /// item at the given index. 
+        /// </summary>
+        /// <param name="index">The index in the list to remove the item at. The
+        /// first item in the list has index 0.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
+        /// less than zero or greater than or equal to Count.</exception>
+        public abstract void RemoveAt(int index);
 
         /// <summary>
         /// Enumerates all of the items in the list, in order. The item at index 0
         /// is enumerated first, then the item at index 1, and so on.
         /// </summary>
+        /// <remarks>The enumerator does not check for changes made
+        /// to the structure of the list. Thus, changes to the list during
+        /// enumeration may cause incorrect enumeration or out of range
+        /// exceptions. Consider overriding this method and adding checks
+        /// for structural changes.</remarks>
         /// <returns>An IEnumerator&lt;T&gt; that enumerates all the
         /// items in the list.</returns>
         public override IEnumerator<T> GetEnumerator()
@@ -96,6 +107,39 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
+        /// Adds an item to the end of the list. This method is equivalent to calling: 
+        /// <code>Insert(Count, item)</code>
+        /// </summary>
+        /// <param name="item">The item to add to the list.</param>
+        public override void Add(T item)
+        {
+            Insert(Count, item);
+        }
+
+        /// <summary>
+        /// Searches the list for the first item that compares equal to <paramref name="item"/>.
+        /// If one is found, it is removed. Otherwise, the list is unchanged.
+        /// </summary>
+        /// <remarks>Equality in the list is determined by the default sense of
+        /// equality for T. If T implements IComparable&lt;T&gt;, the
+        /// Equals method of that interface is used to determine equality. Otherwise, 
+        /// Object.Equals is used to determine equality.</remarks>
+        /// <param name="item">The item to remove from the list.</param>
+        /// <returns>True if an item was found and removed that compared equal to
+        /// <paramref name="item"/>. False if no such item was in the list.</returns>
+        public override bool Remove(T item)
+        {
+            int index = IndexOf(item);
+            if (index >= 0) {
+                RemoveAt(index);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Copies all the items in the list, in order, to <paramref name="array"/>,
         /// starting at index 0.
         /// </summary>
@@ -104,19 +148,6 @@ namespace Wintellect.PowerCollections
         public virtual void CopyTo(T[] array)
         {
             this.CopyTo(array, 0);
-        }
-
-        /// <summary>
-        /// Copies all the items in the list, in order, to <paramref name="array"/>,
-        /// starting at <paramref name="arrayIndex"/>.
-        /// </summary>
-        /// <param name="array">The array to copy to. This array must have a size
-        /// that is greater than or equal to Count + arrayIndex.</param>
-        /// <param name="arrayIndex">The starting index in <paramref name="array"/>
-        /// to copy to.</param>
-        public override void CopyTo(T[] array, int arrayIndex)
-        {
-            base.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -132,6 +163,18 @@ namespace Wintellect.PowerCollections
         public virtual void CopyTo(int index, T[] array, int arrayIndex, int count)
         {
             Range(index, count).CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Provides a read-only view of this list. The returned IList&lt;T&gt; provides
+        /// a view of the list that prevents modifications to the list. Use the method to provide
+        /// access to the list without allowing changes. Since the returned object is just a view,
+        /// changes to the list will be reflected in the view.
+        /// </summary>
+        /// <returns>An IList&lt;T&gt; that provides read-only access to the list.</returns>
+        public virtual new IList<T> AsReadOnly()
+        {
+            return Algorithms.ReadOnly(this);
         }
 
         /// <summary>
@@ -162,7 +205,7 @@ namespace Wintellect.PowerCollections
         /// if no item in the list satisfies that condition.</returns>
         public virtual bool TryFind(Predicate<T> predicate, out T foundItem)
         {
-            return Algorithms.TryFindFirstWhere<T>(this, predicate, out foundItem);
+            return Algorithms.TryFindFirstWhere(this, predicate, out foundItem);
         }
 
         /// <summary>
@@ -193,7 +236,7 @@ namespace Wintellect.PowerCollections
         /// if no item in the list satisfies that condition.</returns>
         public virtual bool TryFindLast(Predicate<T> predicate, out T foundItem)
         {
-            return Algorithms.TryFindLastWhere<T>(this, predicate, out foundItem);
+            return Algorithms.TryFindLastWhere(this, predicate, out foundItem);
         }
 
         /// <summary>
@@ -205,7 +248,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindIndex(Predicate<T> predicate)
         {
-            return Algorithms.FindFirstIndexWhere<T>(this, predicate);
+            return Algorithms.FindFirstIndexWhere(this, predicate);
         }
 
         /// <summary>
@@ -218,7 +261,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindIndex(int index, Predicate<T> predicate)
         {
-            int foundIndex = Algorithms.FindFirstIndexWhere<T>(Range(index, Count - index), predicate);
+            int foundIndex = Algorithms.FindFirstIndexWhere(Range(index, Count - index), predicate);
             if (foundIndex < 0)
                 return -1;
             else
@@ -236,7 +279,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindIndex(int index, int count, Predicate<T> predicate)
         {
-            int foundIndex = Algorithms.FindFirstIndexWhere<T>(Range(index, count), predicate);
+            int foundIndex = Algorithms.FindFirstIndexWhere(Range(index, count), predicate);
             if (foundIndex < 0)
                 return -1;
             else
@@ -252,7 +295,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindLastIndex(Predicate<T> predicate)
         {
-            return Algorithms.FindLastIndexWhere<T>(this, predicate);
+            return Algorithms.FindLastIndexWhere(this, predicate);
         }
 
         /// <summary>
@@ -266,7 +309,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindLastIndex(int index, Predicate<T> predicate)
         {
-            return Algorithms.FindLastIndexWhere<T>(Range(0, index + 1), predicate);
+            return Algorithms.FindLastIndexWhere(Range(0, index + 1), predicate);
         }
 
         /// <summary>
@@ -280,7 +323,7 @@ namespace Wintellect.PowerCollections
         /// condition, -1 is returned.</returns>
         public virtual int FindLastIndex(int index, int count, Predicate<T> predicate)
         {
-            int foundIndex = Algorithms.FindLastIndexWhere<T>(Range(index - count + 1, count), predicate);
+            int foundIndex = Algorithms.FindLastIndexWhere(Range(index - count + 1, count), predicate);
 
             if (foundIndex >= 0)
                 return foundIndex + index - count + 1;
@@ -298,7 +341,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int IndexOf(T item)
         {
-            return Algorithms.FirstIndexOf<T>(this, item, EqualityComparer<T>.Default);
+            return Algorithms.FirstIndexOf(this, item, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -313,7 +356,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int IndexOf(T item, int index)
         {
-            int foundIndex = Algorithms.FirstIndexOf<T>(Range(index, Count - index), item, EqualityComparer<T>.Default);
+            int foundIndex = Algorithms.FirstIndexOf(Range(index, Count - index), item, EqualityComparer<T>.Default);
 
             if (foundIndex >= 0)
                 return foundIndex + index;
@@ -334,7 +377,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int IndexOf(T item, int index, int count)
         {
-            int foundIndex = Algorithms.FirstIndexOf<T>(Range(index, count), item, EqualityComparer<T>.Default);
+            int foundIndex = Algorithms.FirstIndexOf(Range(index, count), item, EqualityComparer<T>.Default);
 
             if (foundIndex >= 0)
                 return foundIndex + index;
@@ -352,7 +395,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int LastIndexOf(T item)
         {
-            return Algorithms.LastIndexOf<T>(this, item, EqualityComparer<T>.Default);
+            return Algorithms.LastIndexOf(this, item, EqualityComparer<T>.Default);
         }
 
         /// <summary>
@@ -367,7 +410,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int LastIndexOf(T item, int index)
         {
-            int foundIndex = Algorithms.LastIndexOf<T>(Range(0, index + 1), item, EqualityComparer<T>.Default);
+            int foundIndex = Algorithms.LastIndexOf(Range(0, index + 1), item, EqualityComparer<T>.Default);
 
             return foundIndex;
         }
@@ -385,7 +428,7 @@ namespace Wintellect.PowerCollections
         /// to <paramref name="item"/>, -1 is returned.</returns>
         public virtual int LastIndexOf(T item, int index, int count)
         {
-            int foundIndex = Algorithms.LastIndexOf<T>(Range(index - count + 1, count), item, EqualityComparer<T>.Default);
+            int foundIndex = Algorithms.LastIndexOf(Range(index - count + 1, count), item, EqualityComparer<T>.Default);
 
             if (foundIndex >= 0)
                 return foundIndex + index - count + 1;
@@ -395,12 +438,14 @@ namespace Wintellect.PowerCollections
 
         /// <summary>
         /// Returns a view onto a sub-range of this list. Items are not copied; the
-        /// returned IList&lt;T&gt; is simply a different view onto the same underlying items. 
+        /// returned IList&lt;T&gt; is simply a different view onto the same underlying items. Changes to this list
+        /// are reflected in the view, and vice versa. Insertions and deletions in the view change the size of the 
+        /// view, but insertions and deletions in the underlying list do not.
         /// </summary>
         /// <remarks>
         /// <para>This method can be used to apply an algorithm to a portion of a list. For example:</para>
-        /// <code>Algorithms.Reverse(deque.Range(3, 6))</code>
-        /// will return the reverse opf the 6 items beginning at index 3.</remarks>
+        /// <code>Algorithms.ReverseInPlace(deque.Range(3, 6))</code>
+        /// will reverse the 6 items beginning at index 3.</remarks>
         /// <param name="start">The starting index of the view.</param>
         /// <param name="count">The number of items in the view.</param>
         /// <returns>A list that is a view onto the given sub-part of this list. </returns>
@@ -409,55 +454,44 @@ namespace Wintellect.PowerCollections
         /// size of the list.</exception>
         public virtual IList<T> Range(int start, int count)
         {
-            return Algorithms.Range<T>(this, start, count);
+            return Algorithms.Range(this, start, count);
         }
 
         /// <summary>
-        /// Inserts a new item at the given index. This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// Convert the given parameter to T. Throw an ArgumentException
+        /// if it isn't.
         /// </summary>
-        /// <param name="index">The index in the list to insert the item at. After the
-        /// insertion, the inserted item is located at this index. The
-        /// first item in the list has index 0.</param>
-        /// <param name="item">The item to insert at the given index.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
-        void IList<T>.Insert(int index, T item)
+        /// <param name="name">parameter name</param>
+        /// <param name="value">parameter value</param>
+        private static T ConvertToItemType(string name, object value)
         {
-            MethodModifiesCollection();
+            try {
+                return (T)value;
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException(string.Format(Strings.WrongType, value, typeof(T)), name);
+            }
         }
 
         /// <summary>
-        /// Removes the item at the given index.  This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
-        /// </summary>
-        /// <param name="index">The index in the list to remove the item at. The
-        /// first item in the list has index 0.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
-        void IList<T>.RemoveAt(int index)
-        {
-            MethodModifiesCollection();
-        }
-
-        /// <summary>
-        /// Adds an item to the end of the list. This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// Adds an item to the end of the list. This method is equivalent to calling: 
+        /// <code>Insert(Count, item)</code>
         /// </summary>
         /// <param name="value">The item to add to the list.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> cannot be converted to T.</exception>
         int IList.Add(object value)
         {
-            MethodModifiesCollection();
-            return -1;
+            int count = Count;
+            Insert(count, ConvertToItemType("value", value));
+            return count;
         }
 
         /// <summary>
-        /// Removes all the items from the list, resulting in an empty list. This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// Removes all the items from the list, resulting in an empty list.
         /// </summary>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
         void IList.Clear()
         {
-            MethodModifiesCollection();
+            Clear();
         }
 
         /// <summary>
@@ -496,67 +530,72 @@ namespace Wintellect.PowerCollections
         }
 
         /// <summary>
-        /// Insert a new item at the given index. This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// Insert a new
+        /// item at the given index. 
         /// </summary>
         /// <param name="index">The index in the list to insert the item at. After the
         /// insertion, the inserted item is located at this index. The
         /// first item in the list has index 0.</param>
         /// <param name="value">The item to insert at the given index.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
+        /// less than zero or greater than Count.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> cannot be converted to T.</exception>
         void IList.Insert(int index, object value)
         {
-            MethodModifiesCollection();
+            Insert(index, ConvertToItemType("value", value));
         }
 
         /// <summary>
-        /// Returns whether the list is a fixed size. This implementation always returns true.
+        /// Returns whether the list is a fixed size. This implementation always returns false.
         /// </summary>
-        /// <value>Alway true, indicating that the list is fixed size.</value>
+        /// <value>Alway false, indicating that the list is not fixed size.</value>
         bool IList.IsFixedSize
         {
-            get { return true; }
+            get { return false; }
         }
 
         /// <summary>
-        /// Returns whether the list is read only. This implementation always returns true.
+        /// Returns whether the list is read only. This implementation returns the value
+        /// from ICollection&lt;T&gt;.IsReadOnly, which is by default, false.
         /// </summary>
-        /// <value>Alway true, indicating that the list is read-only.</value>
+        /// <value>By default, false, indicating that the list is not read only.</value>
         bool IList.IsReadOnly
         {
-            get { return true; }
+            get { return ((ICollection<T>)this).IsReadOnly; }
         }
 
         /// <summary>
         /// Searches the list for the first item that compares equal to <paramref name="value"/>.
-        /// If one is found, it is removed. Otherwise, the list is unchanged.  This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// If one is found, it is removed. Otherwise, the list is unchanged.
         /// </summary>
         /// <remarks>Equality in the list is determined by the default sense of
         /// equality for T. If T implements IComparable&lt;T&gt;, the
         /// Equals method of that interface is used to determine equality. Otherwise, 
         /// Object.Equals is used to determine equality.</remarks>
         /// <param name="value">The item to remove from the list.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> cannot be converted to T.</exception>
         void IList.Remove(object value)
         {
-            MethodModifiesCollection();
+            if (value is T || value == null)
+                Remove((T)value);
         }
 
         /// <summary>
-        /// Removes the item at the given index. This implementation throws a NotSupportedException
-        /// indicating that the list is read-only.
+        /// Removes the
+        /// item at the given index. 
         /// </summary>
         /// <param name="index">The index in the list to remove the item at. The
         /// first item in the list has index 0.</param>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
+        /// less than zero or greater than or equal to Count.</exception>
         void IList.RemoveAt(int index)
         {
-            MethodModifiesCollection();
+            RemoveAt(index);
         }
 
         /// <summary>
-        /// Gets or sets the value at a particular index in the list.
+        /// Gets or sets the
+        /// value at a particular index in the list.
         /// </summary>
         /// <param name="index">The index in the list to get or set an item at. The
         /// first item in the list has index 0, and the last has index Count-1.</param>
@@ -564,8 +603,6 @@ namespace Wintellect.PowerCollections
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is
         /// less than zero or greater than or equal to Count.</exception>
         /// <exception cref="ArgumentException"><paramref name="value"/> cannot be converted to T.</exception>
-        /// <exception cref="NotSupportedException">Always thrown from the setter, indicating that the list
-        /// is read-only.</exception>
         object IList.this[int index]
         {
             get
@@ -575,8 +612,9 @@ namespace Wintellect.PowerCollections
 
             set
             {
-                MethodModifiesCollection();
+                this[index] = ConvertToItemType("value", value);
             }
         }
     }
 }
+

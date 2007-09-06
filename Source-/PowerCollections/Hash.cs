@@ -268,7 +268,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="newSize">The new size of the table.</param>
         /// <returns>The secondary skip amount.</returns>
-        private int GetSecondaryShift(int newSize)
+        private static int GetSecondaryShift(int newSize)
         {
             int x = newSize - 2;      // x is of the form 0000111110 -- a single string of 1's followed by a single zero.
             int secondaryShift = 0;

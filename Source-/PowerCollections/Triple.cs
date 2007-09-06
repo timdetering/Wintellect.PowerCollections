@@ -22,13 +22,13 @@ namespace Wintellect.PowerCollections
         /// Comparers for the first and second type that are used to compare
         /// values.
         /// </summary>
-        private static IComparer<TFirst> firstComparer = Comparer<TFirst>.Default;
-        private static IComparer<TSecond> secondComparer = Comparer<TSecond>.Default;
-        private static IComparer<TThird> thirdComparer = Comparer<TThird>.Default;
+        private static readonly IComparer<TFirst> firstComparer = Comparer<TFirst>.Default;
+        private static readonly IComparer<TSecond> secondComparer = Comparer<TSecond>.Default;
+        private static readonly IComparer<TThird> thirdComparer = Comparer<TThird>.Default;
 
-        private static IEqualityComparer<TFirst> firstEqualityComparer = EqualityComparer<TFirst>.Default;
-        private static IEqualityComparer<TSecond> secondEqualityComparer = EqualityComparer<TSecond>.Default;
-        private static IEqualityComparer<TThird> thirdEqualityComparer = EqualityComparer<TThird>.Default;
+        private static readonly IEqualityComparer<TFirst> firstEqualityComparer = EqualityComparer<TFirst>.Default;
+        private static readonly IEqualityComparer<TSecond> secondEqualityComparer = EqualityComparer<TSecond>.Default;
+        private static readonly IEqualityComparer<TThird> thirdEqualityComparer = EqualityComparer<TThird>.Default;
 
         /// <summary>
         /// The first element of the triple.

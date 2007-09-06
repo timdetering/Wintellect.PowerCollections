@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Diagnostics;
 
 // CONSIDER: provide more efficient implementation of CopyTo.
@@ -663,7 +662,8 @@ namespace Wintellect.PowerCollections
                     return Clone();
 
                 // Create a new list by converting each item in this list via cloning.
-                return new BigList<T>(Algorithms.Convert<T,T>(this, delegate(T item) {
+                return new BigList<T>(Algorithms.Convert<T, T>(this, delegate(T item)
+                {
                     if (item == null)
                         return default(T);    // Really null, because we know T is a reference type
                     else
@@ -959,7 +959,7 @@ namespace Wintellect.PowerCollections
         /// <returns>Returns a Node, not shared or with any shared children, 
         /// with the items from the collection. If the collection was empty,
         /// null is returned.</returns>
-        private Node NodeFromEnumerable(IEnumerable<T> collection)
+        private static Node NodeFromEnumerable(IEnumerable<T> collection)
         {
             Node node = null;
             LeafNode leaf;
@@ -985,7 +985,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="enumerator">The enumerator to take items from.</param>
         /// <returns>A LeafNode with items taken from the enumerator. </returns>
-        private LeafNode LeafFromEnumerator(IEnumerator<T> enumerator)
+        private static LeafNode LeafFromEnumerator(IEnumerator<T> enumerator)
         {
             int i = 0;
             T[] items = null;
@@ -993,7 +993,9 @@ namespace Wintellect.PowerCollections
             while (i < MAXLEAF && enumerator.MoveNext()) {
                 if (i == 0)
                     items = new T[MAXLEAF];
-                items[i++] = enumerator.Current;
+
+                if (items!=null)
+                    items[i++] = enumerator.Current;
             }
 
             if (items != null)
@@ -1010,7 +1012,7 @@ namespace Wintellect.PowerCollections
         /// <returns>null if node is null or copies is 0. Otherwise, a node consisting of <paramref name="copies"/> copies
         /// of node.</returns>
         /// <exception cref="ArgumentOutOfRangeException">copies is negative.</exception>
-        private Node NCopiesOfNode(int copies, Node node)
+        private static  Node NCopiesOfNode(int copies, Node node)
         {
             if (copies < 0)
                 throw new ArgumentOutOfRangeException("copies", Strings.ArgMustNotBeNegative);
@@ -1021,7 +1023,7 @@ namespace Wintellect.PowerCollections
             if (copies == 1)
                 return node;
 
-            if ((long)copies * (long)(node.count) > MAXITEMS)
+            if (copies * (long)(node.count) > MAXITEMS)
                 throw new InvalidOperationException(Strings.CollectionTooLarge);
 
             // Build up the copies by powers of two.
@@ -1138,7 +1140,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="rebalanceArray">Rebalance array to insert into.</param>
         /// <param name="balancedNode">Node to add.</param>
-        private void AddBalancedNodeToRebalanceArray(Node[] rebalanceArray, Node balancedNode)
+        private static void AddBalancedNodeToRebalanceArray(Node[] rebalanceArray, Node balancedNode)
         {
             int slot;
             int count;
@@ -1192,12 +1194,12 @@ namespace Wintellect.PowerCollections
         /// order. The current list is unchanged.
         /// </summary>
         /// <typeparam name="TDest">The type each item is being converted to.</typeparam>
-        /// <param name="converter">A delegate to the method to call, passing each item in <paramref name="sourceCollection"/>.</param>
+        /// <param name="converter">A delegate to the method to call, passing each item in <type name="BigList&lt;T&gt;"/>.</param>
         /// <returns>The resulting BigList from applying <paramref name="converter"/> to each item in this list.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="converter"/> is null.</exception>
         public new BigList<TDest> ConvertAll<TDest>(Converter<T, TDest> converter)
         {
-            return new BigList<TDest>(Algorithms.Convert<T, TDest>(this, converter));
+            return new BigList<TDest>(Algorithms.Convert(this, converter));
         }
 
         /// <summary>
@@ -1205,17 +1207,17 @@ namespace Wintellect.PowerCollections
         /// </summary>
         public void Reverse()
         {
-            Algorithms.ReverseInPlace<T>(this);
+            Algorithms.ReverseInPlace(this);
         }
 
         /// <summary>
-        /// Reverses the items in the range of <paramref name="count"/> items starting from <paramref name="startIndex"/>, in place.
+        /// Reverses the items in the range of <paramref name="count"/> items starting from <paramref name="start"/>, in place.
         /// </summary>
         /// <param name="start">The starting index of the range to reverse.</param>
         /// <param name="count">The number of items in range to reverse.</param>
         public void Reverse(int start, int count)
         {
-            Algorithms.ReverseInPlace<T>(Range(start, count));
+            Algorithms.ReverseInPlace(Range(start, count));
         }
 
         /// <summary>
@@ -1254,7 +1256,7 @@ namespace Wintellect.PowerCollections
         /// <param name="comparison">The comparison delegate used to compare items in the collection.</param>
         public void Sort(Comparison<T> comparison)
         {
-            Sort(Comparers.ComparerFromComparison<T>(comparison));
+            Sort(Comparers.ComparerFromComparison(comparison));
         }
 
 
@@ -1288,7 +1290,7 @@ namespace Wintellect.PowerCollections
         {
             int count, index;
 
-            count = Algorithms.BinarySearch<T>(this, item, comparer, out index);
+            count = Algorithms.BinarySearch(this, item, comparer, out index);
             if (count == 0)
                 return (~index);
             else
@@ -1307,7 +1309,7 @@ namespace Wintellect.PowerCollections
         /// larger than <paramref name="item"/>, the bitwise complement of Count is returned.</returns>
         public int BinarySearch(T item, Comparison<T> comparison)
         {
-            return BinarySearch(item, Comparers.ComparerFromComparison<T>(comparison));
+            return BinarySearch(item, Comparers.ComparerFromComparison(comparison));
         }
 
         
@@ -2707,8 +2709,8 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class BigListRange : ListBase<T>
         {
-            private BigList<T> wrappedList;
-            private int start;
+            private readonly BigList<T> wrappedList;
+            private readonly int start;
             private int count;
 
             /// <summary>

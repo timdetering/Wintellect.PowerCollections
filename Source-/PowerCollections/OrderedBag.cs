@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
 
 // CONSIDER: RemoveIdentical to remove an identical item only. Can this be done with current RedBlack tree implementation? How
 // CONSIDER: useful is it?
@@ -32,10 +31,10 @@ namespace Wintellect.PowerCollections
     ///</remarks>
     ///<seealso cref="Bag&lt;T&gt;"/>
     [Serializable]
-    public class OrderedBag<T> : CollectionBase<T>, ICloneable
+    public class OrderedBag<T> : CollectionBase<T>, ICloneable 
     {
         // The comparer used to compare items. 
-        private IComparer<T> comparer;
+        private readonly IComparer<T> comparer;
 
         // The red-black tree that actually does the work of storing the items.
         private RedBlackTree<T> tree;
@@ -61,7 +60,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="comparison">A delegate to a method that will be used to compare items.</param>
         public OrderedBag(Comparison<T> comparison) :
-            this(Comparers.ComparerFromComparison<T>(comparison))
+            this(Comparers.ComparerFromComparison(comparison))
         {
         }
 
@@ -106,7 +105,7 @@ namespace Wintellect.PowerCollections
         /// <param name="collection">A collection with items to be placed into the OrderedBag.</param>
         /// <param name="comparison">A delegate to a method that will be used to compare items.</param>
         public OrderedBag(IEnumerable<T> collection, Comparison<T> comparison):
-            this(collection, Comparers.ComparerFromComparison<T>(comparison))
+            this(collection, Comparers.ComparerFromComparison(comparison))
         {
         }
 
@@ -599,7 +598,7 @@ namespace Wintellect.PowerCollections
         /// times.
         /// </summary>
         /// <remarks>IsSupersetOf is computed in time O(M log N), where M is the size of the 
-        /// <paramref name="otherSet"/>, and N is the size of the this set.</remarks>
+        /// <paramref name="otherBag"/>, and N is the size of the this set.</remarks>
         /// <param name="otherBag">OrderedBag to compare to.</param>
         /// <returns>True if this is a superset of <paramref name="otherBag"/>.</returns>
         /// <exception cref="InvalidOperationException">This bag and <paramref name="otherBag"/> don't use the same method for comparing items.</exception>
@@ -1144,10 +1143,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ListView : ReadOnlyListBase<T>
         {
-            private OrderedBag<T> myBag;
-            private RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly OrderedBag<T> myBag;
+            private readonly RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Create a new list view wrapped the given set.
@@ -1370,10 +1369,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         public class View : CollectionBase<T>
         {
-            private OrderedBag<T> myBag;
-            private RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly OrderedBag<T> myBag;
+            private readonly RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Initialize the view.

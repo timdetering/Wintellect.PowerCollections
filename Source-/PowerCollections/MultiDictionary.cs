@@ -7,7 +7,6 @@
 //******************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Wintellect.PowerCollections
@@ -27,19 +26,19 @@ namespace Wintellect.PowerCollections
     public class MultiDictionary<TKey, TValue> : MultiDictionaryBase<TKey, TValue>, ICloneable
     {
         // The comparer for comparing keys
-        private IEqualityComparer<TKey> keyEqualityComparer;
+        private readonly IEqualityComparer<TKey> keyEqualityComparer;
 
         // The comparer for comparing values;
-        private IEqualityComparer<TValue> valueEqualityComparer;
+        private readonly IEqualityComparer<TValue> valueEqualityComparer;
 
         // The comparer for compaing keys and values.
-        private IEqualityComparer<KeyAndValues> equalityComparer;
+        private readonly IEqualityComparer<KeyAndValues> equalityComparer;
 
         // The hash that holds the keys and values.
         private Hash<KeyAndValues> hash;
 
         // Whether duplicate values for the same key are allowed.
-        private bool allowDuplicateValues;
+        private readonly bool allowDuplicateValues;
 
         /// <summary>
         /// A structure to hold the key and the values associated with the key.
@@ -103,7 +102,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class KeyAndValuesEqualityComparer : IEqualityComparer<KeyAndValues>
         {
-            private IEqualityComparer<TKey> keyEqualityComparer;
+            private readonly IEqualityComparer<TKey> keyEqualityComparer;
 
             public KeyAndValuesEqualityComparer(IEqualityComparer<TKey> keyEqualityComparer)
             {
@@ -528,7 +527,7 @@ namespace Wintellect.PowerCollections
         /// Throw an InvalidOperationException indicating that this type is not cloneable.
         /// </summary>
         /// <param name="t">Type to test.</param>
-        private void NonCloneableType(Type t)
+        private static void NonCloneableType(Type t)
         {
             throw new InvalidOperationException(string.Format(Strings.TypeNotCloneable, t.FullName));
         }

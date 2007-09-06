@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
 
 namespace Wintellect.PowerCollections
 {
@@ -29,10 +28,10 @@ namespace Wintellect.PowerCollections
     ///</remarks>
     ///<seealso cref="Set&lt;T&gt;"/>
     [Serializable]
-    public class OrderedSet<T> : CollectionBase<T>, ICollection<T>, ICloneable
+    public class OrderedSet<T> : CollectionBase<T>, ICollection<T>, ICloneable 
     {
         // The comparer used to compare items. 
-        private IComparer<T> comparer;
+        private readonly IComparer<T> comparer;
 
         // The red-black tree that actually does the work of storing the items.
         private RedBlackTree<T> tree;
@@ -58,7 +57,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="comparison">A delegate to a method that will be used to compare items.</param>
         public OrderedSet(Comparison<T> comparison) :
-            this(Comparers.ComparerFromComparison<T>(comparison))
+            this(Comparers.ComparerFromComparison(comparison))
         {
         }
 
@@ -103,7 +102,7 @@ namespace Wintellect.PowerCollections
         /// <param name="collection">A collection with items to be placed into the OrderedSet.</param>
         /// <param name="comparison">A delegate to a method that will be used to compare items.</param>
         public OrderedSet(IEnumerable<T> collection, Comparison<T> comparison):
-            this(collection, Comparers.ComparerFromComparison<T>(comparison))
+            this(collection, Comparers.ComparerFromComparison(comparison))
         {
         }
 
@@ -175,7 +174,7 @@ namespace Wintellect.PowerCollections
         /// <para>Cloning the set takes time O(N log N), where N is the number of items in the set.</para></remarks>
         /// <returns>The cloned set.</returns>
         /// <exception cref="InvalidOperationException">T is a reference type that does not implement ICloneable.</exception>
-        public OrderedSet<T> CloneContents()
+        public OrderedSet<T> CloneContents() 
         {
             bool itemIsValueType;
             if (!Util.IsCloneableType(typeof(T), out itemIsValueType))
@@ -951,10 +950,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private class ListView : ReadOnlyListBase<T>
         {
-            private OrderedSet<T> mySet;
-            private RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly OrderedSet<T> mySet;
+            private readonly RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Create a new list view wrapped the given set.
@@ -1177,10 +1176,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         public class View : CollectionBase<T>, ICollection<T>
         {
-            private OrderedSet<T> mySet;
-            private RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly OrderedSet<T> mySet;
+            private readonly RedBlackTree<T>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Initialize the view.

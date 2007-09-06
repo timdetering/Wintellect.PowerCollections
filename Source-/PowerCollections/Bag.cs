@@ -35,10 +35,10 @@ namespace Wintellect.PowerCollections
     public class Bag<T> : CollectionBase<T>, ICloneable
     {
         // The comparer used to compare KeyValuePairs. Equals and GetHashCode are used.
-        private IEqualityComparer<KeyValuePair<T,int>> equalityComparer;
+        private readonly IEqualityComparer<KeyValuePair<T,int>> equalityComparer;
 
         // The comparer used to compare items. Kept just for the Comparer property. 
-        private IEqualityComparer<T> keyEqualityComparer;
+        private readonly IEqualityComparer<T> keyEqualityComparer;
 
         // The hash that actually does the work of storing the items. Each item is
         // stored as a representative item, and a count.
@@ -487,20 +487,20 @@ namespace Wintellect.PowerCollections
             if (collection == null)
                 throw new ArgumentNullException("collection");
 
-            int count = 0;
+            int removeCount = 0;
 
             if (collection == this) {
-                count = Count;
+                removeCount = Count;
                 Clear();            // special case, otherwise we will throw.
             }
             else {
                 foreach (T item in collection) {
                     if (Remove(item))
-                        ++count;
+                        ++removeCount;
                 }
             }
 
-            return count;
+            return removeCount;
         }
 
         /// <summary>

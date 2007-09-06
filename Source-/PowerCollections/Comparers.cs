@@ -23,7 +23,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         class KeyValueEqualityComparer<TKey, TValue> : IEqualityComparer<KeyValuePair<TKey, TValue>>
         {
-            private IEqualityComparer<TKey> keyEqualityComparer;
+            private readonly IEqualityComparer<TKey> keyEqualityComparer;
 
             public KeyValueEqualityComparer(IEqualityComparer<TKey> keyEqualityComparer)
             { this.keyEqualityComparer = keyEqualityComparer; }
@@ -57,7 +57,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         class KeyValueComparer<TKey, TValue> : IComparer<KeyValuePair<TKey, TValue>>
         {
-            private IComparer<TKey> keyComparer;
+            private readonly IComparer<TKey> keyComparer;
 
             public KeyValueComparer(IComparer<TKey> keyComparer)
             { this.keyComparer = keyComparer; }
@@ -86,8 +86,8 @@ namespace Wintellect.PowerCollections
         [Serializable]
         class PairComparer<TKey, TValue> : IComparer<KeyValuePair<TKey, TValue>>
         {
-            private IComparer<TKey> keyComparer;
-            private IComparer<TValue> valueComparer;
+            private readonly IComparer<TKey> keyComparer;
+            private readonly IComparer<TValue> valueComparer;
 
             public PairComparer(IComparer<TKey> keyComparer, IComparer<TValue> valueComparer)
             { 
@@ -126,7 +126,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         class ComparisonComparer<T> : IComparer<T>
         {
-            private Comparison<T> comparison;
+            private readonly Comparison<T> comparison;
 
             public ComparisonComparer(Comparison<T> comparison)
             { this.comparison = comparison; }
@@ -155,7 +155,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         class ComparisonKeyValueComparer<TKey, TValue> : IComparer<KeyValuePair<TKey, TValue>>
         {
-            private Comparison<TKey> comparison;
+            private readonly Comparison<TKey> comparison;
 
             public ComparisonKeyValueComparer(Comparison<TKey> comparison)
             { this.comparison = comparison; }

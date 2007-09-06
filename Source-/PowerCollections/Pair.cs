@@ -23,11 +23,11 @@ namespace Wintellect.PowerCollections
         /// values.
         /// </summary>
 
-        private static IComparer<TFirst> firstComparer = Comparer<TFirst>.Default;
-        private static IComparer<TSecond> secondComparer = Comparer<TSecond>.Default;
+        private static readonly IComparer<TFirst> firstComparer = Comparer<TFirst>.Default;
+        private static readonly IComparer<TSecond> secondComparer = Comparer<TSecond>.Default;
 
-        private static IEqualityComparer<TFirst> firstEqualityComparer = EqualityComparer<TFirst>.Default;
-        private static IEqualityComparer<TSecond> secondEqualityComparer = EqualityComparer<TSecond>.Default;
+        private static readonly IEqualityComparer<TFirst> firstEqualityComparer = EqualityComparer<TFirst>.Default;
+        private static readonly IEqualityComparer<TSecond> secondEqualityComparer = EqualityComparer<TSecond>.Default;
 
         /// <summary>
         /// The first element of the pair.
@@ -154,7 +154,7 @@ namespace Wintellect.PowerCollections
         /// </summary>
         /// <param name="obj">The pair to compare to.</param>
         /// <returns>An integer indicating how this pair compares to <paramref name="obj"/>. Less
-        /// than zero indicates this pair is less than <paramref name="other"/>. Zero indicate this pair is
+        /// than zero indicates this pair is less than <paramref name="obj"/>. Zero indicate this pair is
         /// equals to <paramref name="obj"/>. Greater than zero indicates this pair is greater than
         /// <paramref name="obj"/>.</returns>
         /// <exception cref="ArgumentException"><paramref name="obj"/> is not of the correct type.</exception>

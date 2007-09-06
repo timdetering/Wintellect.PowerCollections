@@ -1398,7 +1398,7 @@ namespace Wintellect.PowerCollections.Tests
 
             public override bool Equals(object obj)
             {
-                return (obj is MyInt && ((MyInt)obj).value == value);
+                return (obj != null && obj is MyInt && ((MyInt)obj).value == value);
             }
 
             public override int GetHashCode()

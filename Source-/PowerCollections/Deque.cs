@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
 
 // CONSIDER: always create a small initial buffer, so that the checks in Add for a null buffer aren't needed. This 
 // would improve performance slightly, but make empty Deque's take more memory. 
@@ -668,7 +667,6 @@ namespace Wintellect.PowerCollections
         /// </summary>
         private void IncreaseBuffer()
         {
-            int count = Count;
             int length = buffer.Length;
 
             T[] newBuffer = new T[length * 2];

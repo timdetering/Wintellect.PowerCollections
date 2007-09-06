@@ -38,7 +38,7 @@ namespace Wintellect.PowerCollections
 	///</remarks>
     [Serializable]
 	internal class RedBlackTree<T>: IEnumerable<T> {
-		private IComparer<T> comparer;			// interface for comparing elements, only Compare is used.
+		private readonly IComparer<T> comparer;			// interface for comparing elements, only Compare is used.
 		private Node root;					// The root of the tree. Can be null when tree is empty.
 		private int count;						// The count of elements in the tree.
 
@@ -386,7 +386,7 @@ namespace Wintellect.PowerCollections
                 previous = duplicateFound.item;
 
                 // Are we replacing instread of inserting?
-                if (duplicateFound != null && (dupPolicy == DuplicatePolicy.ReplaceFirst || dupPolicy == DuplicatePolicy.ReplaceLast)) {
+                if (dupPolicy == DuplicatePolicy.ReplaceFirst || dupPolicy == DuplicatePolicy.ReplaceLast) {
                     duplicateFound.item = item;
 
                     // Didn't insert after all. Return counts back to their previous value.
@@ -997,16 +997,16 @@ namespace Wintellect.PowerCollections
         public int DeleteRange(RangeTester rangeTester)
         {
             bool deleted;
-            int count = 0;
+            int counter = 0;
             T dummy;
 
             do {
                 deleted = DeleteItemFromRange(rangeTester, true, out dummy);
                 if (deleted)
-                    ++count;
+                    ++counter;
             } while (deleted);
 
-            return count;
+            return counter;
         }
 
         /// <summary>
@@ -1037,21 +1037,21 @@ namespace Wintellect.PowerCollections
                 }
 
                 int compare = rangeTester(node.item);
-                int count;
+                int counter;
 
                 if (compare == 0) {
-                    count = 1;  // the node itself
-                    count += CountRangeUnderNode(rangeTester, node.left, true, aboveRangeBottom);
-                    count += CountRangeUnderNode(rangeTester, node.right, belowRangeTop, true);
+                    counter = 1;  // the node itself
+                    counter += CountRangeUnderNode(rangeTester, node.left, true, aboveRangeBottom);
+                    counter += CountRangeUnderNode(rangeTester, node.right, belowRangeTop, true);
                 }
                 else if (compare < 0) {
-                    count = CountRangeUnderNode(rangeTester, node.right, belowRangeTop, aboveRangeBottom);
+                    counter = CountRangeUnderNode(rangeTester, node.right, belowRangeTop, aboveRangeBottom);
                 }
                 else { // compare > 0
-                    count = CountRangeUnderNode(rangeTester, node.left, belowRangeTop, aboveRangeBottom);
+                    counter = CountRangeUnderNode(rangeTester, node.left, belowRangeTop, aboveRangeBottom);
                 }
 
-                return count;
+                return counter;
             }
             else {
                 return 0;
@@ -1168,7 +1168,7 @@ namespace Wintellect.PowerCollections
 				return;
 
 			// Red nodes marked as "@@", black nodes as "..".
-            Console.WriteLine("{0}{1} {2,4} {3}", prefixNode, node.IsRed ? "@@" : "..", node.Count, node.item.ToString());
+            Console.WriteLine("{0}{1} {2,4} {3}", prefixNode, node.IsRed ? "@@" : "..", node.Count, node.item);
 
 			PrintSubTree(node.left, prefixChildren + "|-L-", prefixChildren + "|  ");
 			PrintSubTree(node.right, prefixChildren + "|-R-", prefixChildren + "   ");

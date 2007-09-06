@@ -7,7 +7,6 @@
 //******************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Wintellect.PowerCollections
@@ -29,20 +28,20 @@ namespace Wintellect.PowerCollections
     public class OrderedMultiDictionary<TKey, TValue> : MultiDictionaryBase<TKey, TValue>, ICloneable
     {
         // The comparer for comparing keys
-        private IComparer<TKey> keyComparer;
+        private readonly IComparer<TKey> keyComparer;
 
         // The comparer for comparing values;
-        private IComparer<TValue> valueComparer;
+        private readonly IComparer<TValue> valueComparer;
 
         // The comparer for comparing key-value pairs. Ordered by keys, then by values
-        private IComparer<KeyValuePair<TKey, TValue>> comparer;
+        private readonly IComparer<KeyValuePair<TKey, TValue>> comparer;
 
         // The red-black tree that stores the keys and values. Each key-value pair is stored as a separate item,
         // sorted first by keys, then by value. Thus, all values associated with a given key are stored together.
         private RedBlackTree<KeyValuePair<TKey, TValue>> tree;
 
         // Whether duplicate values for the same key are allowed.
-        private bool allowDuplicateValues;      
+        private readonly bool allowDuplicateValues;      
 
         // Total number of keys in the tree.
         private int keyCount;
@@ -59,16 +58,16 @@ namespace Wintellect.PowerCollections
             return pair;
         }
 
-        /// <summary>
-        /// Helper function to create a new KeyValuePair struct with a default value.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <returns>A new KeyValuePair.</returns>
-        private static KeyValuePair<TKey, TValue> NewPair(TKey key)
-        {
-            KeyValuePair<TKey, TValue> pair = new KeyValuePair<TKey, TValue>(key, default(TValue));
-            return pair;
-        }
+        ///// <summary>
+        ///// Helper function to create a new KeyValuePair struct with a default value.
+        ///// </summary>
+        ///// <param name="key">The key.</param>
+        ///// <returns>A new KeyValuePair.</returns>
+        //private static KeyValuePair<TKey, TValue> NewPair(TKey key)
+        //{
+        //    KeyValuePair<TKey, TValue> pair = new KeyValuePair<TKey, TValue>(key, default(TValue));
+        //    return pair;
+        //}
 
         /// <summary>
         /// Get a RangeTester that maps to the range of all items with the 
@@ -554,7 +553,7 @@ namespace Wintellect.PowerCollections
         /// Throw an InvalidOperationException indicating that this type is not cloneable.
         /// </summary>
         /// <param name="t">Type to test.</param>
-        private void NonCloneableType(Type t)
+        private static void NonCloneableType(Type t)
         {
             throw new InvalidOperationException(string.Format(Strings.TypeNotCloneable, t.FullName));
         }
@@ -633,7 +632,7 @@ namespace Wintellect.PowerCollections
         [Serializable]
         private sealed class KeyValuePairsCollection : ReadOnlyCollectionBase<KeyValuePair<TKey, TValue>>
         {
-            private OrderedMultiDictionary<TKey, TValue> myDictionary;
+            private readonly OrderedMultiDictionary<TKey, TValue> myDictionary;
 
             public KeyValuePairsCollection(OrderedMultiDictionary<TKey, TValue> myDictionary)
             {
@@ -789,10 +788,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         public class View : MultiDictionaryBase<TKey, TValue>
         {
-            private OrderedMultiDictionary<TKey, TValue> myDictionary;
-            private RedBlackTree<KeyValuePair<TKey, TValue>>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly OrderedMultiDictionary<TKey, TValue> myDictionary;
+            private readonly RedBlackTree<KeyValuePair<TKey, TValue>>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Initialize the View.

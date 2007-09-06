@@ -8,8 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Diagnostics;
 
 namespace Wintellect.PowerCollections
 {
@@ -32,7 +30,7 @@ namespace Wintellect.PowerCollections
     public class Set<T> : CollectionBase<T>, ICollection<T>, ICloneable
     {
         // The comparer used to hash/compare items. 
-        private IEqualityComparer<T> equalityComparer;
+        private readonly IEqualityComparer<T> equalityComparer;
 
         // The hash table that actually does the work of storing the items.
         private Hash<T> hash;

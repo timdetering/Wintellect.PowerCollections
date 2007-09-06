@@ -7,7 +7,6 @@
 //******************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Wintellect.PowerCollections
@@ -32,7 +31,7 @@ namespace Wintellect.PowerCollections
 	{
         // The comparer for comparing keys. This is saved to return from the Comparer property,
         // but is otherwise not used.
-        private IComparer<TKey> keyComparer;
+        private readonly IComparer<TKey> keyComparer;
 
 		// The comparer for comparing key-value pairs.
 		private IComparer<KeyValuePair<TKey,TValue>> pairComparer;
@@ -92,7 +91,7 @@ namespace Wintellect.PowerCollections
 		/// </summary>
 		/// <param name="comparison">A delegate to a method that will be used to compare keys.</param>
 		public OrderedDictionary(Comparison<TKey> comparison) :
-            this(null, Comparers.ComparerFromComparison<TKey>(comparison), Comparers.ComparerKeyValueFromComparisonKey<TKey, TValue>(comparison))
+            this(null, Comparers.ComparerFromComparison(comparison), Comparers.ComparerKeyValueFromComparisonKey<TKey, TValue>(comparison))
 		{
         }
 
@@ -189,7 +188,7 @@ namespace Wintellect.PowerCollections
         /// Throw an InvalidOperationException indicating that this type is not cloneable.
         /// </summary>
         /// <param name="t">Type to test.</param>
-        private void NonCloneableType(Type t)
+        private static void NonCloneableType(Type t)
         {
             throw new InvalidOperationException(string.Format(Strings.TypeNotCloneable, t.FullName));
         }
@@ -645,10 +644,10 @@ namespace Wintellect.PowerCollections
         [Serializable]
         public class View : DictionaryBase<TKey, TValue>
         {
-            private OrderedDictionary<TKey,TValue> myDictionary;
-            private RedBlackTree<KeyValuePair<TKey,TValue>>.RangeTester rangeTester;   // range tester for the range being used.
-            private bool entireTree;                   // is the view the whole tree?
-            private bool reversed;                     // is the view reversed?
+            private readonly  OrderedDictionary<TKey,TValue> myDictionary;
+            private readonly RedBlackTree<KeyValuePair<TKey, TValue>>.RangeTester rangeTester;   // range tester for the range being used.
+            private readonly bool entireTree;                   // is the view the whole tree?
+            private readonly bool reversed;                     // is the view reversed?
 
             /// <summary>
             /// Initialize the View.
