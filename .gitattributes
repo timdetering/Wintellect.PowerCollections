@@ -1,0 +1,44 @@
+# To update run:
+#   curl -L https://gist.github.com/timdetering/9f7b9a28809080691687bb6c0f343d74/raw/ > ./.gitattributes.gist
+#
+
+# Set the default behavior, in case people don't have core.autocrlf set.
+#   text=auto
+#   Git will handle the files in whatever way it thinks is best. This is a good default option.
+#
+#   text eol=crlf
+#   Git will always convert line endings to CRLF on checkout.
+#   You should use this for files that must keep CRLF endings, even on OSX or Linux.
+#
+#   text eol=lf
+#   Git will always convert line endings to LF on checkout.
+#   You should use this for files that must keep LF endings, even on Windows.
+#
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted to native line endings on checkout.
+*.c  text
+*.h  text
+*.cs text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat    text eol=crlf
+*.rc     text eol=crlf
+*.sln    text eol=crlf
+*.csproj text eol=crlf
+*.vcproj text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+#   binary
+#   Git will understand that the files specified are not text, and it should not try to change them. The binary setting is also an alias for -text -diff.
+#
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.tif  binary
+*.tiff binary
+
+# Language specific diffs
+*.cs diff=csharp
+
+# TODO: Untabify
