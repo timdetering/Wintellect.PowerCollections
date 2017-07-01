@@ -1,22 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Tests>
-  <edtdocversion branch="retail" build="50727" revision="1378" />
-  <TestCategory type="Microsoft.VisualStudio.TestTools.Common.TestCategory">
-    <id type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
-      <id type="System.Guid">8c43106b-9dc1-4907-a29f-aa66a61bf5b6</id>
-    </id>
-    <name type="System.String">Lists of Tests</name>
-    <description type="System.String" />
-    <enabled type="System.Boolean">True</enabled>
-    <parentCategoryId type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
-      <id type="System.Guid">00000000-0000-0000-0000-000000000000</id>
-    </parentCategoryId>
-    <runConfiguration type="Microsoft.VisualStudio.TestTools.Common.Link">
-      <id type="System.Guid">9295cadb-e376-4482-a9b0-9163906631ce</id>
-      <name type="System.String">Local Test Run</name>
-      <storage type="System.String">localtestrun.testrunconfig</storage>
-      <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration</type>
-      <enabled type="System.Boolean">True</enabled>
-    </runConfiguration>
-  </TestCategory>
-</Tests>
+<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <RunConfiguration name="Local Test Run" storage="localtestrun.testrunconfig" id="9295cadb-e376-4482-a9b0-9163906631ce" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration" />
+  </TestList>
+</TestLists>

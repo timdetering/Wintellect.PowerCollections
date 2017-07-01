@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Migrated rules for Wintellect.PowerCollections.ruleset" Description="This rule set was created from the CodeAnalysisRules property for the &quot;Debug (Any CPU)&quot; configuration in project &quot;C:\Users\tdete\Code\Third-party.git\Wintellect.PowerCollections\Source\PowerCollections\Wintellect.PowerCollections.csproj&quot;." ToolsVersion="15.0">
+  <IncludeAll Action="Warning" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1300" Action="None" />
+    <Rule Id="CA1301" Action="None" />
+    <Rule Id="CA1302" Action="None" />
+    <Rule Id="CA1303" Action="None" />
+    <Rule Id="CA1304" Action="None" />
+    <Rule Id="CA1305" Action="None" />
+    <Rule Id="CA1306" Action="None" />
+    <Rule Id="WCFS00001" Action="None" />
+    <Rule Id="WCFS00002" Action="None" />
+    <Rule Id="WCFS00003" Action="None" />
+    <Rule Id="WCFS00004" Action="None" />
+    <Rule Id="WCFS00005" Action="None" />
+    <Rule Id="WCFS00006" Action="None" />
+    <Rule Id="WCFS00007" Action="None" />
+    <Rule Id="WCFS00008" Action="None" />
+    <Rule Id="WCFS00009" Action="None" />
+    <Rule Id="WCFS00010" Action="None" />
+    <Rule Id="WCFS00011" Action="None" />
+    <Rule Id="WCFSM0001" Action="None" />
+    <Rule Id="WCFSM0002" Action="None" />
+    <Rule Id="WCFSM0003" Action="None" />
+    <Rule Id="WCFSM0004" Action="None" />
+    <Rule Id="WCFSM0005" Action="None" />
+    <Rule Id="WCFSM0006" Action="None" />
+    <Rule Id="WCFSM0007" Action="None" />
+    <Rule Id="WCFSM0008" Action="None" />
+    <Rule Id="WCFSM0009" Action="None" />
+    <Rule Id="WCFSM0010" Action="None" />
+    <Rule Id="WCFSM0011" Action="None" />
+    <Rule Id="WCFSM0012" Action="None" />
+    <Rule Id="WCFSM0013" Action="None" />
+    <Rule Id="WCFSM0014" Action="None" />
+    <Rule Id="WCFSM0015" Action="None" />
+    <Rule Id="Wintellect1000" Action="None" />
+    <Rule Id="Wintellect2000" Action="None" />
+    <Rule Id="Wintellect2001" Action="None" />
+    <Rule Id="Wintellect2002" Action="None" />
+    <Rule Id="Wintellect2003" Action="None" />
+    <Rule Id="Wintellect2004" Action="None" />
+    <Rule Id="Wintellect2005" Action="None" />
+    <Rule Id="Wintellect2006" Action="None" />
+    <Rule Id="Wintellect3000" Action="None" />
+    <Rule Id="Wintellect3001" Action="None" />
+    <Rule Id="Wintellect3002" Action="None" />
+    <Rule Id="Wintellect3003" Action="None" />
+    <Rule Id="Wintellect3004" Action="None" />
+    <Rule Id="Wintellect3005" Action="None" />
+  </Rules>
+</RuleSet>
